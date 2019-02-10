@@ -50,10 +50,10 @@ class Board:
                 nbSeeds-=1
         self.grenier[self.player] += self.seedsGain(p0)    #on renvoie le nombre de graines mangées (et on les retire)
         self.player = 1 -self.player
-        print(p)
-        print(p.grenier)
+  
 
-
+print(p)
+print(p.grenier)
     def seedsGain(self,lastPit):  #supprime les graines mangées et renvoie le nombre de graines amassées
         seeds=0
         while (6*(1-self.player) <= lastPit <= 5+6*(1-self.player)) and (2 <= self.board[lastPit] <= 3):    #la dernière case que l'on a remplie est chez l'adversaire
