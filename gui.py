@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'interface.ui'
+# Form implementation generated from reading ui file 'gui.ui'
 #
 # Created by: PyQt5 UI code generator 5.10.1
 #
@@ -116,6 +116,7 @@ class Ui_AwAI(object):
         self.menubar.addAction(self.menuOuvrir.menuAction())
 
         self.retranslateUi(AwAI)
+        self.actionQuitter.triggered.connect(AwAI.close)
         QtCore.QMetaObject.connectSlotsByName(AwAI)
 
     def retranslateUi(self, AwAI):
@@ -123,7 +124,7 @@ class Ui_AwAI(object):
         AwAI.setWindowTitle(_translate("AwAI", "AwAI"))
         self.label.setText(_translate("AwAI", "<html><head/><body><p align=\"center\">Image à venir</p></body></html>"))
         self.label_2.setText(_translate("AwAI", "<html><head/><body><p><img src=\":/newPrefix/awai.bmp\"/></p></body></html>"))
-        self.menuOuvrir.setTitle(_translate("AwAI", "O&uvrir"))
+        self.menuOuvrir.setTitle(_translate("AwAI", "Ou&vrir"))
         self.actionNouvelle_partie.setText(_translate("AwAI", "&Nouvelle partie"))
         self.actionQuitter.setText(_translate("AwAI", "&Quitter"))
 

@@ -240,7 +240,7 @@
    </property>
    <widget class="QMenu" name="menuOuvrir">
     <property name="title">
-     <string>O&amp;uvrir</string>
+     <string>Ou&amp;vrir</string>
     </property>
     <addaction name="actionNouvelle_partie"/>
     <addaction name="actionQuitter"/>
@@ -261,5 +261,22 @@
  <resources>
   <include location="image.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionQuitter</sender>
+   <signal>triggered()</signal>
+   <receiver>AwAI</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>397</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
