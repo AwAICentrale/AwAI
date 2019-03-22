@@ -123,7 +123,6 @@ class Ui_AwAI(object):
 
         self.retranslateUi(AwAI)
         self.actionQuit.triggered.connect(AwAI.close)
-        self.pushButton_1.clicked.connect(self.line.hide)
         QtCore.QMetaObject.connectSlotsByName(AwAI)
 
     def retranslateUi(self, AwAI):
@@ -135,8 +134,10 @@ class Ui_AwAI(object):
         self.toolBar.setWindowTitle(_translate("AwAI", "toolBar"))
         self.actionNewGame.setText(_translate("AwAI", "&New Game"))
         self.actionNewGame.setIconText(_translate("AwAI", "New Game"))
+        self.actionNewGame.setShortcut(_translate("AwAI", "Ctrl+N"))
         self.actionQuit.setText(_translate("AwAI", "&Quit"))
         self.actionQuit.setIconText(_translate("AwAI", "Quit"))
+        self.actionQuit.setShortcut(_translate("AwAI", "Ctrl+Q"))
 
 import image_rc
 
