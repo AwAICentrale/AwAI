@@ -48,6 +48,16 @@ class MyMainWindow(QMainWindow, Ui_AwAI):
         dialog = Settings()
         sys.exit(dialog.exec_())
 
+    def closeEvent(self, event):
+        """To close main function proper"""
+        sys.exit(0)
+
+    def close(self):
+        """To close settings"""
+        self.destroy()
+        sys.exit(0)
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     myapp = MyMainWindow()

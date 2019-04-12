@@ -104,7 +104,7 @@ class Ui_AwAI(object):
         self.statusbar.setObjectName("statusbar")
         AwAI.setStatusBar(self.statusbar)
         self.menubar = QtWidgets.QMenuBar(AwAI)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1136, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1136, 22))
         self.menubar.setObjectName("menubar")
         self.menuOpen = QtWidgets.QMenu(self.menubar)
         self.menuOpen.setObjectName("menuOpen")
@@ -123,6 +123,7 @@ class Ui_AwAI(object):
 
         self.retranslateUi(AwAI)
         self.actionQuit.triggered.connect(AwAI.close)
+        self.actionNewGame.triggered.connect(AwAI.new)
         QtCore.QMetaObject.connectSlotsByName(AwAI)
 
     def retranslateUi(self, AwAI):

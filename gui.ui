@@ -225,7 +225,7 @@
      <x>0</x>
      <y>0</y>
      <width>1136</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOpen">
@@ -288,6 +288,22 @@
     <hint type="destinationlabel">
      <x>553</x>
      <y>397</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNewGame</sender>
+   <signal>triggered()</signal>
+   <receiver>AwAI</receiver>
+   <slot>new()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>567</x>
+     <y>424</y>
     </hint>
    </hints>
   </connection>
