@@ -1,7 +1,12 @@
 # AwAI
 
-To visualize the GUI, you need to have Qt5 installed.
+This is a small implementation of the Awale Game (Abapa version)
+To use it you have to install python3.
 
+You can play in both mode : Console or GUI. For now the GUI doesn't implement the game against the IAs we programmed.
+To get the information you need to play in Console Mode, please refer to the jupyter notebook documentation.
+
+To visualize the GUI, you need to have Qt5 installed.
 ## On Linux Ubuntu/Debian
 
 **QT 5**
