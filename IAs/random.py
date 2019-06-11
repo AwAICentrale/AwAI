@@ -2,8 +2,8 @@ from copy import deepcopy
 from random import randint
 
 class Random:
-    def __init__(self,board):
-        self.board = board
+    def __init__(self):
+        pass
     def play(self):
         listMove=[]
         for moveA in range(1,7): #we try every move possible

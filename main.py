@@ -1,17 +1,19 @@
 import sys
 from PyQt5 import QtGui, QtCore
-from PyQt5.QtWidgets import  QMainWindow, QApplication, QDialog
-from gui import Ui_AwAI
-from settings import Ui_Dialog
-from awaleClass import *
+from PyQt5 import QtWidgets
+from GUI.gui import Ui_AwAI
+from GUI.settings import Ui_Dialog
 
-class Settings(QDialog, Ui_Dialog):
+from engine import *
+
+class Settings(QtWidgets.QDialog, Ui_Dialog):
     def __init__(self):
         super(Settings,self).__init__()
         self.setupUi(self)
 
     def accept(self):
-        myapp.b = Board()
+        myapp.game = Game()
+        myapp.b = myapp.game.b
         myapp.refresh()
         for id,button in enumerate(myapp.buttons):
             button.clicked.connect(lambda state,i=id : myapp.play(i+1)) # use lambda function to connect because we need an arg
@@ -20,7 +22,7 @@ class Settings(QDialog, Ui_Dialog):
     def reject(self):
         self.destroy()
 
-class MyMainWindow(QMainWindow, Ui_AwAI):
+class MyMainWindow(QtWidgets.QMainWindow, Ui_AwAI):
     def __init__(self):
         super(MyMainWindow,self).__init__()
         self.setupUi(self)
@@ -31,8 +33,7 @@ class MyMainWindow(QMainWindow, Ui_AwAI):
         self.pushButton_10,self.pushButton_11,self.pushButton_12]
 
     def play(self,pit):
-        tmp = self.b.play(pit-6 * self.b.player)
-        print(pit,tmp)
+        tmp = self.game.play(pit-6 * self.isPlaying)
 
         if tmp is not None and tmp != "END":
             self.refresh()
@@ -59,7 +60,7 @@ class MyMainWindow(QMainWindow, Ui_AwAI):
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     myapp = MyMainWindow()
     myapp.show()
     sys.exit(app.exec_())
