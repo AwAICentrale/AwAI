@@ -1,6 +1,7 @@
 from player import *
 
 from copy import deepcopy
+from exceptions import *
 
 class Game:
     def __init__(self, nbSeedsEnd=0):
@@ -41,22 +42,35 @@ class Game:
         Takes one arguments : number of the pit wanted to be played
         """
         # TODO use exceptions to implement each case
+        try:
+            if (pit not in range(1,7)):
+                raise NotInYourSideError() # Pit not included in [1,6]
 
-        if (pit not in range(1,7)) or self.b.get(pit-1+6*self.isPlaying)==0: # Pit not included in [1,6] or pit wanted is empty
-            return False
-        cb = deepcopy(self)
-        cb.move(pit)#We play
-        if not cb.emptySide(6*(cb.player)): #if opponent's side is not empty
-            return True
-        else : # we need to know if there are licit moves
+            if self.b.get(pit-1+6*self.isPlaying)==0:
+                raise EmptyPitError() # pit wanted is empty
+
+            b1 = deepcopy(self.b)
+            b1.move(pit)#We play
+            if not b1.emptySide(6*(b1.player)): #if opponent's side is not empty
+                return True
+
             for coupSimule in range(1, 7):
-                db = deepcopy(self) #For move we do a copy of the board (we don't want to change the original board)
-                if coupSimule != pit: # moves different from pit
-                    db.move(coupSimule)
-                    if not(db.emptySide(6*db.player)):    #there is a other move that does'nt starve the opponent
-                        return False                    #so the move is not licit
-                return "END" #It means the move has to be played but it ends the game
-        return True
+                b2 = deepcopy(b1) #For move we do a copy of the board (we don't want to change the original board)
+                self.move(coupSimule, b2)
+                if not(b2.emptySide(6*self.isPlaying)): #there is a other move that does'nt starve the opponent
+                    raise StarvationError() #so the move is not licit
+            return "END" #It means the move has to be played but it ends the game
+        except NotInYourSideError as e:
+            print(e)
+            return e
+        except EmptyPitError as e:
+            print(e)
+            return e 
+        except StarvationError as e:
+            print(e)
+            return e 
+        
+
 
     def play(self, pit):
         """Function to use in order to play a move on the Board
@@ -78,24 +92,26 @@ class Game:
         return True
 
 
-    def move(self,pit):
+    def move(self,pit,board=None):
         """Function moving the seeds on the board and
         It takes one argument : number of the last pit visited
         returns number of seeds captured"""
+        if board is None:
+            board = self.b
 
         pit = pit-1+6 * self.isPlaying
-        nbSeeds = self.b.get(pit)       #saving the number of seeds to sow
-        self.b.set(pit,0)
+        nbSeeds = board.get(pit)       #saving the number of seeds to sow
+        board.set(pit,0)
         p = pit
         while nbSeeds > 0:
             p = (p + 1) % 12
             if p != pit:           #We don't put any seeds in the starting pit
-                self.b.add(p,1)
+                board.add(p,1)
                 nbSeeds-=1
         seedsEaten=0
-        while (6*(1-self.isPlaying) <= p <= 5+6*(1-self.isPlaying)) and (2 <= self.b.get(p) <= 3):    # Last seeds is indeed in opponent's side and there is 2 or 3 seeds in the pit
-            seedsEaten += self.b.get(p)
-            self.b.set(p,0)
+        while (6*(1-self.isPlaying) <= p <= 5+6*(1-self.isPlaying)) and (2 <= board.get(p) <= 3):    # Last seeds is indeed in opponent's side and there is 2 or 3 seeds in the pit
+            seedsEaten += board.get(p)
+            board.set(p,0)
             p -= 1
            
         self.whoIsPlaying().addToLoft(seedsEaten)
