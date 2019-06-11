@@ -25,17 +25,13 @@ class Game:
         while self.nbSeedsEaten < 48 - self.nbSeedsEnd and max(self.player2.loft,self.player2.loft)<=24:
             print(self.b)
             pit = self.whoIsPlaying().play()
-            rsltMove = self.move(pit)
+            rsltMove = self.play(pit)
             if rsltMove =="END":
                 self.whoIsPlaying().addToLoft(48-self.nbSeedsEaten)
-            
+                return self.endOfGame()
+
         print(self.b)
-        if self.player1.loft > self.player2.loft: #return nb of the inner
-            return self.player1
-        elif self.player1.loft < self.player2.loft:
-            return self.player2
-        else:
-            return None
+        return self.endOfGame()
 
     def allowed(self, pit):
         """Function checking if the move is licit or not
@@ -75,13 +71,13 @@ class Game:
     def play(self, pit):
         """Function to use in order to play a move on the Board
         It takes one argument : number of the pit wanted to be played"""
-        rslt=self.allowed(pit)
-        if rslt=="END":
-            return "END"
-        elif rslt == False:
-            return None
+        if pit is None:
+            return self.endOfGame()
+        elif type(pit) in [NotInYourSideError, StarvationError, EmptyPitError]:
+            return False
         else:
-            return self.move(pit)
+            self.move(pit)
+            return True
 
     def emptySide(self,ps):
         """Function looking if the side which first pit is ps is empty
@@ -123,6 +119,14 @@ class Game:
             return self.player1
         else:
             return self.player2
+
+    def endOfGame(self):
+        if self.player1.loft > self.player2.loft: #return nb of the inner
+            return self.player1
+        elif self.player1.loft < self.player2.loft:
+            return self.player2
+        else:
+            return None
 
 class Board:
     def __init__(self):
