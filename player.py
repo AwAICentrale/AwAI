@@ -25,8 +25,8 @@ class IA(Player):
         if self.algo == "random":
             self.algo = Random(self.game)
         elif self.algo == "minimax":
-            self.algo = Minimax(None,None,None)
-        elif self.algo == "minimaxAB":
+            self.algo = Minimax(self.game,None,None)
+        elif self.algo == "alphabeta":
             self.algo = AlphaBeta(self.game,None,None)
     
     def play(self):
@@ -39,14 +39,10 @@ class Human(Player):
     def play(self):
         
         while 1:
-            pit = input("What's your choice (1-6)")
+            pit = input("What's your choice (1-6) ?")
             try:
                 if type(pit) != int:
                     raise ValueError
                 return pit
             except ValueError:
-                print("Entrez une valeur entre 1 et 6")
-            
-            
-
-    
+                print("Enter a value between 1 and 6 :")  

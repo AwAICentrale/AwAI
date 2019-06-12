@@ -6,12 +6,15 @@ from exceptions import *
 class Game:
     def __init__(self, nbSeedsEnd=0):
         self.b = Board()
-        self.nbSeedsEnd=nbSeedsEnd # Below this nulber of seeds the game stops
+        # Below this number of seeds the game stops
+        self.nbSeedsEnd=nbSeedsEnd 
         self.algosAvailable = ["random","alphabeta","minimax"]
         self.isPlaying = 0
         self.nbSeedsEaten = 0
 
     def setPlayers(self, player1, player2):
+        """You have to call this function to create the type of the players 
+        before the game starts"""
         if player1 in self.algosAvailable:
             self.player1 = IA(player1, self)
         else:
@@ -22,7 +25,10 @@ class Game:
             self.player2 = Human(self)
     
     def runGame(self):
-        while self.nbSeedsEaten < 48 - self.nbSeedsEnd and max(self.player2.loft,self.player2.loft)<=24:
+        """The main function that runs the game. We stop the loop if 
+        the loft of a player is 24 or more or if the number of seeds on the
+        board is below nbSeedsEnd."""
+        while (self.nbSeedsEaten < 48 - self.nbSeedsEnd) and max(self.player2.loft,self.player2.loft)<=24:
             print(self.b)
             pit = self.whoIsPlaying().play()
             rsltMove = self.play(pit)
@@ -37,25 +43,30 @@ class Game:
         """Function checking if the move is licit or not
         Takes one arguments : number of the pit wanted to be played
         """
-        # TODO use exceptions to implement each case
         try:
             if (pit not in range(1,7)):
                 raise NotInYourSideError() # Pit not included in [1,6]
 
-            if self.b.get(pit-1+6*self.isPlaying)==0:
+            if self.b.getPit(pit-1+6*self.isPlaying)==0:
                 raise EmptyPitError() # pit wanted is empty
 
             b1 = deepcopy(self.b)
-            b1.move(pit)#We play
-            if not b1.emptySide(6*(b1.player)): #if opponent's side is not empty
+            b1.move(pit)
+
+            #if opponent's side is not empty
+            if not b1.emptySide(6*(b1.player)): 
                 return True
 
             for coupSimule in range(1, 7):
-                b2 = deepcopy(b1) #For move we do a copy of the board (we don't want to change the original board)
+                #we don't want to change the original board, just to know if it's allowed
+                b2 = deepcopy(b1) 
                 self.move(coupSimule, b2)
-                if not(b2.emptySide(6*self.isPlaying)): #there is a other move that does'nt starve the opponent
+                #there is a other move that does'nt starve the opponent
+                if not(b2.emptySide(6*self.isPlaying)):
                     raise StarvationError() #so the move is not licit
-            return "END" #It means the move has to be played but it ends the game
+
+            #It means the move has to be played but it ends the game
+            return "END" 
         except NotInYourSideError as e:
             print(e)
             return e
@@ -83,7 +94,7 @@ class Game:
         """Function looking if the side which first pit is ps is empty
         It takes one argument : ps"""
         for k in range(ps, ps+6):
-            if self.b.get(k) != 0:
+            if self.b.getPit(k) != 0:
                 return False
         return True
 
@@ -96,18 +107,20 @@ class Game:
             board = self.b
 
         pit = pit-1+6 * self.isPlaying
-        nbSeeds = board.get(pit)       #saving the number of seeds to sow
-        board.set(pit,0)
+        nbSeeds = board.get(pit) #saving the number of seeds to sow
+        board.setPit(pit,0)
         p = pit
         while nbSeeds > 0:
             p = (p + 1) % 12
-            if p != pit:           #We don't put any seeds in the starting pit
-                board.add(p,1)
+            if p != pit: #We don't put any seeds in the starting pit
+                board.addPit(p,1)
                 nbSeeds-=1
+
+        # Last seeds is indeed in opponent's side and there is 2 or 3 seeds in the pit
         seedsEaten=0
-        while (6*(1-self.isPlaying) <= p <= 5+6*(1-self.isPlaying)) and (2 <= board.get(p) <= 3):    # Last seeds is indeed in opponent's side and there is 2 or 3 seeds in the pit
+        while (6*(1-self.isPlaying) <= p <= 5+6*(1-self.isPlaying)) and (2 <= board.get(p) <= 3):    
             seedsEaten += board.get(p)
-            board.set(p,0)
+            board.setPit(p,0)
             p -= 1
            
         self.whoIsPlaying().addToLoft(seedsEaten)
@@ -151,11 +164,11 @@ class Board:
         s+="|\n  ======================================="
         return s
 
-    def get(self, k):
+    def getPit(self, k):
         return self.board[k]
 
-    def set(self, k, val):
+    def setPit(self, k, val):
         self.board[k] = val
 
-    def add(self, k, val):
+    def addPit(self, k, val):
         self.board[k] += val
