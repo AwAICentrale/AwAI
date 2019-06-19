@@ -3,8 +3,10 @@ from player import *
 from copy import deepcopy
 from exceptions import *
 
+import sys
 import time
 
+# TODO add a time clock that provide you the average execution time of one game
 class Game:
     def __init__(self, nbSeedsEnd=0):
         self.b = Board()
@@ -31,13 +33,14 @@ class Game:
         the loft of a player is 24 or more or if the number of seeds on the
         board is below nbSeedsEnd."""
         while (self.nbSeedsEaten < 48 - self.nbSeedsEnd) and max(self.player1.loft,self.player2.loft)<=24:
+            time.sleep(0.01)
             pit = self.whoIsPlaying().play()
             rsltMove = self.play(pit)
-            time.sleep(0.01)
             if rsltMove and toPrint:
-                print(self.b)
                 print(self.player1.loft, self.player2.loft)
-            if rsltMove =="END":
+                print(self.b)
+                print(self.isPlaying, pit)
+            if rsltMove == "END":
                 self.whoIsPlaying().addToLoft(48-self.nbSeedsEaten)
                 return self.endOfGame()
         return self.endOfGame()
@@ -47,46 +50,48 @@ class Game:
         Takes one arguments : number of the pit wanted to be played
         """
         try:
-            if (pit not in range(1,7)):
+            if (pit not in range(6)):
                 raise NotInYourSideError() # Pit not included in [1,6]
 
-            if self.b.getPit(pit-1+6*self.isPlaying)==0:
+            if self.b.getPit(pit+6*self.isPlaying)==0:
                 raise EmptyPitError() # pit wanted is empty
 
             b1 = deepcopy(self.b)
             self.move(pit,board=b1)
-
             #if opponent's side is not empty
-            if not b1.emptySide(6*(self.isPlaying)): 
+            if not(b1.emptySide(1 - self.isPlaying)): 
                 return True
 
-            for coupSimule in range(1, 7):
+
+            print("                                potentially illicit starving")
+            for coupSimule in range(6):
                 #we don't want to change the original board, just to know if it's allowed
-                b2 = deepcopy(b1) 
-                self.move(coupSimule, b2)
-                #there is a other move that does'nt starve the opponent
-                if not(b2.emptySide(6*self.isPlaying)):# TODO change this madness
-                    raise StarvationError() #so the move is not licit
+                b2 = deepcopy(self.b)
+
+                #YOU MUST HAVE A SEED IN THE PIT YOU COULD PLAY
+                if self.b.getPit(coupSimule) != 0:
+                    self.move(coupSimule, board=b2)
+                    #there is a other move that does'nt starve the opponent
+                    if not(b2.emptySide(1 - self.isPlaying)):
+                        raise StarvationError() #so the move is not licit
 
             #It means the move has to be played but it ends the game
             return "END" 
         except NotInYourSideError as e:
-            print(e)
-            return e
+            print(e,file=sys.stderr)
+            return False
         except EmptyPitError as e:
-            print(e)
-            return e 
+            print(e,file=sys.stderr)
+            return False
         except StarvationError as e:
-            print(e)
-            return e 
+            print(e,file=sys.stderr)
+            return False
 
     def play(self, pit):
         """Function to use in order to play a move on the Board
         It takes one argument : number of the pit wanted to be played"""
-        if pit is None:
-            return self.endOfGame()
-        elif type(pit) in [NotInYourSideError, StarvationError, EmptyPitError]:
-            return False
+        if pit == "END":
+            return "END"
         else:
             self.move(pit)
             return True
@@ -129,6 +134,7 @@ class Game:
             return self.player2
 
     def endOfGame(self):
+        print(self.b)
         if self.player1.loft > self.player2.loft: #return nb of the inner
             return self.player1
         elif self.player1.loft < self.player2.loft:
@@ -168,10 +174,10 @@ class Board:
     def addPit(self, k, val):
         self.board[k] += val
 
-    def emptySide(self,ps):
+    def emptySide(self,player):
         """Function looking if the side which first pit is ps is empty
         It takes one argument : ps"""
-        for k in range(ps, ps+6):
+        for k in range(player, player+6):
             if self.getPit(k) != 0:
                 return False
         return True

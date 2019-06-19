@@ -12,4 +12,5 @@ class Random:
             if rslt: # it is a valid move
                 return moveTest
             if rslt == "END":
-                return None
+                return "END"
+        return "END"
