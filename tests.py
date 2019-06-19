@@ -19,7 +19,7 @@ class Test:
                 self.stat[1] += 1
             else:
                 self.stat[2] += 1
-        return self.stat / self.nbGame
+        return [self.stat[i] / self.nbGame for i in self.stat]
 
     def __repr__(self):
         return "algo {: s} : {: f} % \n \

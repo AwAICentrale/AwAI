@@ -20,7 +20,7 @@ class Player(ABC):
 class IA(Player):
     """docstring for Player."""
     def __init__(self, algo, game):
-        super(game)
+        super().__init__(game)
         self.algo = algo
         if self.algo == "random":
             self.algo = Random(self.game)
@@ -34,7 +34,7 @@ class IA(Player):
 
 class Human(Player):
     def __init__(self, game):
-        super(game)
+        super().__init__(game)
 
     def play(self):
         

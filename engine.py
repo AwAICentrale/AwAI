@@ -3,6 +3,8 @@ from player import *
 from copy import deepcopy
 from exceptions import *
 
+import time
+
 class Game:
     def __init__(self, nbSeedsEnd=0):
         self.b = Board()
@@ -28,15 +30,16 @@ class Game:
         """The main function that runs the game. We stop the loop if 
         the loft of a player is 24 or more or if the number of seeds on the
         board is below nbSeedsEnd."""
-        while (self.nbSeedsEaten < 48 - self.nbSeedsEnd) and max(self.player2.loft,self.player2.loft)<=24:
-            print(self.b)
+        while (self.nbSeedsEaten < 48 - self.nbSeedsEnd) and max(self.player1.loft,self.player2.loft)<=24:
             pit = self.whoIsPlaying().play()
             rsltMove = self.play(pit)
+            time.sleep(0.01)
+            if rsltMove:
+                print(self.b)
+                print(self.player1.loft, self.player2.loft)
             if rsltMove =="END":
                 self.whoIsPlaying().addToLoft(48-self.nbSeedsEaten)
                 return self.endOfGame()
-
-        print(self.b)
         return self.endOfGame()
 
     def allowed(self, pit):
@@ -51,10 +54,10 @@ class Game:
                 raise EmptyPitError() # pit wanted is empty
 
             b1 = deepcopy(self.b)
-            b1.move(pit)
+            self.move(pit,board=b1)
 
             #if opponent's side is not empty
-            if not b1.emptySide(6*(b1.player)): 
+            if not b1.emptySide(6*(self.isPlaying)): 
                 return True
 
             for coupSimule in range(1, 7):
@@ -62,7 +65,7 @@ class Game:
                 b2 = deepcopy(b1) 
                 self.move(coupSimule, b2)
                 #there is a other move that does'nt starve the opponent
-                if not(b2.emptySide(6*self.isPlaying)):
+                if not(b2.emptySide(6*self.isPlaying)):# TODO change this madness
                     raise StarvationError() #so the move is not licit
 
             #It means the move has to be played but it ends the game
@@ -76,8 +79,6 @@ class Game:
         except StarvationError as e:
             print(e)
             return e 
-        
-
 
     def play(self, pit):
         """Function to use in order to play a move on the Board
@@ -90,15 +91,6 @@ class Game:
             self.move(pit)
             return True
 
-    def emptySide(self,ps):
-        """Function looking if the side which first pit is ps is empty
-        It takes one argument : ps"""
-        for k in range(ps, ps+6):
-            if self.b.getPit(k) != 0:
-                return False
-        return True
-
-
     def move(self,pit,board=None):
         """Function moving the seeds on the board and
         It takes one argument : number of the last pit visited
@@ -106,8 +98,8 @@ class Game:
         if board is None:
             board = self.b
 
-        pit = pit-1+6 * self.isPlaying
-        nbSeeds = board.get(pit) #saving the number of seeds to sow
+        pit += 6 * self.isPlaying
+        nbSeeds = board.getPit(pit) #saving the number of seeds to sow
         board.setPit(pit,0)
         p = pit
         while nbSeeds > 0:
@@ -118,13 +110,16 @@ class Game:
 
         # Last seeds is indeed in opponent's side and there is 2 or 3 seeds in the pit
         seedsEaten=0
-        while (6*(1-self.isPlaying) <= p <= 5+6*(1-self.isPlaying)) and (2 <= board.get(p) <= 3):    
-            seedsEaten += board.get(p)
+        while (6*(1-self.isPlaying) <= p <= 5+6*(1-self.isPlaying)) and (2 <= board.getPit(p) <= 3):    
+            seedsEaten += board.getPit(p)
             board.setPit(p,0)
             p -= 1
-           
-        self.whoIsPlaying().addToLoft(seedsEaten)
-        self.isPlaying = 1 - self.isPlaying
+
+        # we only update the loft and the player if it's a play on the real board
+        if board == self.b:   
+            self.whoIsPlaying().addToLoft(seedsEaten)
+            self.isPlaying = 1 - self.isPlaying
+
         return seedsEaten
 
     def whoIsPlaying(self):
@@ -172,3 +167,11 @@ class Board:
 
     def addPit(self, k, val):
         self.board[k] += val
+
+    def emptySide(self,ps):
+        """Function looking if the side which first pit is ps is empty
+        It takes one argument : ps"""
+        for k in range(ps, ps+6):
+            if self.getPit(k) != 0:
+                return False
+        return True
