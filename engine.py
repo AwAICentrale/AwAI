@@ -26,7 +26,7 @@ class Game:
         else:
             self.player2 = Human(self)
     
-    def runGame(self):
+    def runGame(self,toPrint=True):
         """The main function that runs the game. We stop the loop if 
         the loft of a player is 24 or more or if the number of seeds on the
         board is below nbSeedsEnd."""
@@ -34,7 +34,7 @@ class Game:
             pit = self.whoIsPlaying().play()
             rsltMove = self.play(pit)
             time.sleep(0.01)
-            if rsltMove:
+            if rsltMove and toPrint:
                 print(self.b)
                 print(self.player1.loft, self.player2.loft)
             if rsltMove =="END":

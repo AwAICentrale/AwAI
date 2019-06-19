@@ -9,11 +9,11 @@ class Test:
         self.algo1 = algo1
         self.algo2 = algo2
 
-    def run(self):
+    def run(self,toPrint=True):
         for i in range (self.nbGame):
             self.game = Game()
             self.game.setPlayers(self.algo1,self.algo2)
-            winner = self.game.runGame()
+            winner = self.game.runGame(toPrint)
             if winner == self.game.player1:
                 self.stat[0] += 1 
             elif winner == self.game.player2:
@@ -27,3 +27,8 @@ class Test:
                 algo {: s} : {: f} % \n \
                 tied : {: f} % ".format(self.game.player1.algo,self.stat[0],\
                 self.game.player2.algo,self.stat[1], self.stat[2])
+
+t = Test("random","random",10)
+t.run(toPrint=False)
+print(t.game.player1.loft, t.game.player2.loft)
+print(t.stat)
