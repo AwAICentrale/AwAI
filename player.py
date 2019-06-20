@@ -25,7 +25,7 @@ class IA(Player):
         if self.algo == "random":
             self.algo = Random(self.game)
         elif self.algo == "minimax":
-            self.algo = Minimax(self.game,None,None)
+            self.algo = Minimax(self.game,[1.2,0.8])
         elif self.algo == "alphabeta":
             self.algo = AlphaBeta(self.game,None,None)
     

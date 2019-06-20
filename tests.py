@@ -27,3 +27,7 @@ class Test:
                 algo {: s} : {: f} % \n \
                 tied : {: f} % ".format(self.game.player1.algo,self.stat[0],\
                 self.game.player2.algo,self.stat[1], self.stat[2])
+t = Test("minimax","random",100)
+t.run(toPrint=True)
+print(t.game.player1.loft, t.game.player2.loft)
+print(t.stat)

@@ -1,24 +1,25 @@
 from copy import deepcopy
-
+# TODO we should save the listCoeffGain in a file with Amelioration
+# and load it with Minimax
 class Minimax:
-    def __init__(self,game,listFGain,listCoeffGain):
+    def __init__(self,game,listCoeffGain):
         self.game = game
-        if len(listFGain)!=len(listCoeffGain):
-            return None
-        self.listFGain=listFGain
         self.listCoeffGain=listCoeffGain
 
     def play(self):
         bestMove=0
         hGain=float("-inf")
-        lGain = len(self.listFGain)*[0]
-        for moveA in range(1,7): #we try every move possible
+        for moveA in range(6): #we try every move possible
             gainMoveA=float("inf")
             if self.game.allowed(moveA):
-                for moveB in range(1,7):
+                b1 = deepcopy(self.game.b)
+                seedsEatenA = self.game.move(moveA,board=b1,isPlaying=self.game.isPlaying)
+                for moveB in range(6):
                     gainMoveAB=float("inf")
-                    if self.game.allowed(moveB): #Move A and B are licit 
-                        gainMoveAB=self.gain(moveA,moveB)
+                    if self.game.allowed(moveB,board=b1):
+                        #Move A and B are licit 
+                        seedsEatenB = self.game.move(moveA,board=b1,isPlaying=1-self.game.isPlaying)
+                        gainMoveAB = self.gain(b1,self.game.isPlaying, seedsEatenA, seedsEatenB)
                     if gainMoveAB<gainMoveA:
                         gainMoveA=gainMoveAB
             if gainMoveA!=float("inf"):
@@ -27,18 +28,15 @@ class Minimax:
                     bestMove=moveA
         return bestMove
 
-    def gain(self,moveA,moveB):
-        dictGain = {"gainA":self.gainA,"gainB":self.gainB}
-        g=0
-        for e, coeff in zip(self.listFGain,self.listCoeffGain):
-            #we don't want to change the original board during gain calculus            
-            fakeBoard=deepcopy(self.game.b) 
-            g += coeff * dictGain[e](fakeBoard,moveA,moveB)
+    def gain(self,board,player,seedsEatenA,seedsEatenB):
+        """This function takes the board we want to evaluate and the 
+        player for whom we want to evaluate the move."""
+        g = self.listCoeffGain[0] * self.gainA(seedsEatenA) + \
+        self.listCoeffGain[1] * self.gainA(seedsEatenB)
         return g
     
-    def gainA(self,fakeBoard,moveA,moveB):
-        return self.game.move(moveA,fakeBoard)
+    def gainA(self, seedsEatenA):
+        return seedsEatenA
 
-    def gainB(self,fakeBoard,moveA,moveB):
-        self.game.move(moveA,fakeBoard)
-        return -self.game.move(moveB,fakeBoard)
+    def gainB(self,seedsEatenB):
+        return -seedsEatenB

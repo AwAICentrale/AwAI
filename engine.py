@@ -32,8 +32,10 @@ class Game:
         """The main function that runs the game. We stop the loop if 
         the loft of a player is 24 or more or if the number of seeds on the
         board is below nbSeedsEnd."""
-        while (self.nbSeedsEaten < 48 - self.nbSeedsEnd) and max(self.player1.loft,self.player2.loft)<=24:
-            time.sleep(0.01)
+        while (self.nbSeedsEaten < 48 - self.nbSeedsEnd) \
+        and max(self.player1.loft,self.player2.loft)<=24 \
+        and not(self.nbSeedsEaten == 46 and self.endGameIsBlocked()):
+            #time.sleep(0.01)
             pit = self.whoIsPlaying().play()
             rsltMove = self.play(pit)
             if rsltMove and toPrint:
@@ -45,34 +47,39 @@ class Game:
                 return self.endOfGame()
         return self.endOfGame()
 
-    def allowed(self, pit):
+    def allowed(self, pit, board=None, isPlaying=None):
         """Function checking if the move is licit or not
         Takes one arguments : number of the pit wanted to be played
         """
+        if board is None:
+            board = self.b
+        if isPlaying is None:
+            isPlaying = self.isPlaying
+
         try:
             if (pit not in range(6)):
                 raise NotInYourSideError() # Pit not included in [1,6]
 
-            if self.b.getPit(pit+6*self.isPlaying)==0:
+            if board.getPit(pit+6*isPlaying)==0:
                 raise EmptyPitError() # pit wanted is empty
 
-            b1 = deepcopy(self.b)
+            b1 = deepcopy(board)
             self.move(pit,board=b1)
             #if opponent's side is not empty
-            if not(b1.emptySide(1 - self.isPlaying)): 
+            if not(b1.emptySide(1 - isPlaying)): 
                 return True
 
 
             print("                                potentially illicit starving")
             for coupSimule in range(6):
                 #we don't want to change the original board, just to know if it's allowed
-                b2 = deepcopy(self.b)
+                b2 = deepcopy(board)
 
                 #YOU MUST HAVE A SEED IN THE PIT YOU COULD PLAY
-                if self.b.getPit(coupSimule) != 0:
+                if board.getPit(coupSimule) != 0:
                     self.move(coupSimule, board=b2)
                     #there is a other move that does'nt starve the opponent
-                    if not(b2.emptySide(1 - self.isPlaying)):
+                    if not(b2.emptySide(1 - isPlaying)):
                         raise StarvationError() #so the move is not licit
 
             #It means the move has to be played but it ends the game
@@ -96,14 +103,16 @@ class Game:
             self.move(pit)
             return True
 
-    def move(self,pit,board=None):
+    def move(self,pit,board=None, isPlaying=None):
         """Function moving the seeds on the board and
         It takes one argument : number of the last pit visited
         returns number of seeds captured"""
         if board is None:
             board = self.b
+        if isPlaying is None:
+            isPlaying = self.isPlaying
 
-        pit += 6 * self.isPlaying
+        pit += 6 * isPlaying
         nbSeeds = board.getPit(pit) #saving the number of seeds to sow
         board.setPit(pit,0)
         p = pit
@@ -115,13 +124,14 @@ class Game:
 
         # Last seeds is indeed in opponent's side and there is 2 or 3 seeds in the pit
         seedsEaten=0
-        while (6*(1-self.isPlaying) <= p <= 5+6*(1-self.isPlaying)) and (2 <= board.getPit(p) <= 3):    
+        while (6*(1-isPlaying) <= p <= 5+6*(1-isPlaying)) and (2 <= board.getPit(p) <= 3):    
             seedsEaten += board.getPit(p)
             board.setPit(p,0)
             p -= 1
 
         # we only update the loft and the player if it's a play on the real board
-        if board == self.b:   
+        # we shouldn't move the seed on the board if we force the player
+        if board == self.b and isPlaying == self.isPlaying:   
             self.whoIsPlaying().addToLoft(seedsEaten)
             self.isPlaying = 1 - self.isPlaying
 
@@ -141,6 +151,14 @@ class Game:
             return self.player2
         else:
             return None
+
+    def endGameIsBlocked(self):
+        if self.b.board == [1,0,0,0,0,0,1,0,0,0,0,0]:
+            self.player1.addToLoft(1)
+            self.player2.addToLoft(1)
+            self.b = [0]*12
+            return True
+        return False
 
 class Board:
     def __init__(self):
@@ -177,7 +195,7 @@ class Board:
     def emptySide(self,player):
         """Function looking if the side which first pit is ps is empty
         It takes one argument : ps"""
-        for k in range(player, player+6):
+        for k in range(6*player, 6*player+6):
             if self.getPit(k) != 0:
                 return False
         return True
