@@ -29,9 +29,9 @@ Prenez note du dossier dans lequel le terminal s'est ouvert, dont le nom s'affic
 
 Dans le terminal, écrivez la commande suivante et appuyez sur "Entrée":  
 
->>>
+```
 git clone https://github.com/AwAICentrale/AwAI.git
->>>
+```
 
 Votre identifiant et mot de passe de GitHub vous seront demandés. Sous windows, si vous vous trompez la première fois, vous aurez probablement une erreur en réessayant. Référez vous à la section "Problèmes & Solutions" plus bas.
 
@@ -42,9 +42,9 @@ Votre identifiant et mot de passe de GitHub vous seront demandés. Sous windows,
 
 Régulièrement, il faudra que vous synchronisiez votre version locale du projet avec la version disponible sur GitHub. C'est ce que vous pouvez faire avec la commande  
 
->>>
+```
 git pull
->>>
+```
 
 Git récupère alors les derniers changements et les applique à vos fichiers locaux, sur les branches correspondantes.
 
@@ -57,9 +57,9 @@ Rien de spécial ici, faites ce qu'il faut sur Python
 Ouvrez un terminal avec git, et placez vous dans le dossier du projet (`cd AwAI`, par exemple).  
 La commande suivante crée la branche nommée `changez_ce_nom` et vous y place  
 
->>>
+```
 git checkout -b changez\_ce\_nom
->>>
+```
 
 Il n'y a pas de convention de nommage pour les branches, et ça n'a pas d'importance.
 
@@ -67,9 +67,9 @@ Il n'y a pas de convention de nommage pour les branches, et ça n'a pas d'import
 
 Pour chaque fichier `fichier_i` que vous avez modifié ou crée, entrez la commande  
 
->>>
+```
 git add fichier\_i  
->>>
+```
 
 On dit que ces fichiers sont maintenant "dans l'index".  
 Note: `git status` peut vous être utile pour savoir quels fichiers ont été modifiés, crées, ou ont déjà été ajoutés à l'index.
@@ -78,9 +78,9 @@ Note: `git status` peut vous être utile pour savoir quels fichiers ont été mo
 
 Entrez la commande  
 
->>>
+```
 git commit  
->>>
+```
 
 Git vous présente alors un éditeur de texte, dans lequel vous pouvez écrire une description de ce que vos changements font. Le but est de transmettre le "pourquoi?" plus que le "comment?", mais vous êtes libres de mettre ce que vous voulez. Une fois terminé, enregistrez et fermez l'éditeur.  
 Par défaut sous windows, l'éditeur est vim. Vous avez 2 options: persévérer, ou abandonner et changer d'éditeur puis relancer la commande précédente.  
@@ -96,9 +96,9 @@ qui peut prendre autant des lignes que vous voulez.
 ### 6. Envoyez le commit sur GitLab
 
 Avec la simple commande  
->>>
+```
 git push origin nom\_de\_branche
->>>
+```
 
 ### 7. Ouvrez une merge request sur GitLab
 
@@ -119,15 +119,15 @@ Sinon, vous pouvez changer de dossier dans le terminal pour vous y rendre avec l
 Si git vous donne cette erreur avant même de vous demander vos identifiants, c'est parce que vous vous êtes trompé de login/mot de passe la première fois et
 que git a enregistré les mauvais identifiants. Ce problème ce résoud par la commande:
 
->>>
+```
 git config --system --unset credential.helper
->>>
+```
 
 Vous aurez maintenant à rentrer votre mot de passe à chaque fois que vous interagirez avec GitHub... Sous windows, la commande suivante a de bonne chances de résoudre le problème:
 
->>>
+```
 git config --global credential.helper manager
->>>
+```
 
 ### Vous avez ouvert une merge request, mais il y a un conflit avec master
 
@@ -146,23 +146,23 @@ modifier le commit est la bonne solution.
 Il suffit pour ça que vous fassiez vos changements dans le code (ou rien du tout si vous voulez juste changer le message de commit),
 puis que vous fassiez `git add` pour chacun des fichiers modifiés, puis finalement
 
->>>
+```
 git commit --amend
->>>
+```
 
 qui vous présentera à nouveau l'éditeur de texte, avec le message de votre dernier commit, que vous pouvez changer. Le cas échéant, vous pouvez mettre à jour votre merge request avec
 
->>>
+```
 git push origin nom\_de\_branche --force
->>>
+```
 
 ### Git vous empêche de changer de branche parce que vous avez des changements non validés
 
 C'est simplement pour vous empêcher d'écraser vos changements par erreur. Si ceux-ci n'ont pas d'importance, vous pouvez dire à git de les oublier, de revenir à l'état par défaut de la branche où vous êtes actuellement:
 
->>>
+```
 git reset --hard nom\_de\_branche
->>>
+```
 
 après quoi vous pouvez `checkout` ce que vous voulez.  
 Si vous tenez à sauvegarder vos changements, vous pouvez le faire à l'aide de `git stash push`, puis les restaurer avec `git stash pop`.
