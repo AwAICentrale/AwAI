@@ -39,7 +39,7 @@ class Game:
             pit = self.whoIsPlaying().play()
             rsltMove = self.play(pit)
             if rsltMove and toPrint:
-                print("Joueur :" + str(self.isPlaying) + " joue : " + str(pit))
+                print("Joueur :" + str(1-self.isPlaying) + " joue : " + str(pit))
                 print(self.player0.loft, self.player1.loft)
                 print(self.b)
             if rsltMove == "END":
@@ -165,7 +165,7 @@ class Board:
         self.board = [4 for i in range(12)]
 
     def __repr__(self):
-        s="  ====================J0=================\n"
+        s="  ====================J1=================\n"
         s+="  ||"
         for k in range(11, 5, -1):              #la partie haute
             if self.board[k]//10 == 0:
@@ -180,7 +180,7 @@ class Board:
                 s+=" " + str(self.board[k])+ "  | "
             else:                               #si le nb de graine est >= 10
                 s+=" "+ str(self.board[k])+ " | "
-        s+="|\n  ====================J1================="
+        s+="|\n  ====================J0================="
         return s
 
     def getPit(self, k):
