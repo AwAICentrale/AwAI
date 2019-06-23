@@ -22,12 +22,15 @@ class IA(Player):
     def __init__(self, algo, game):
         super().__init__(game)
         self.algo = algo
+        liste = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
+        liste2 = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
         if self.algo == "random":
             self.algo = Random(self.game)
         elif self.algo == "minimax":
-            self.algo = Minimax(self.game,[1.2,0.8])
+            self.algo = Minimax(self.game,liste)
         elif self.algo == "alphabeta":
-            self.algo = AlphaBeta(self.game,None,None)
+            
+            self.algo = AlphaBeta(self.game,2,liste)
     
     def play(self):
         return self.algo.play()
