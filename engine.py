@@ -38,13 +38,15 @@ class Game:
             #time.sleep(0.01)
             pit = self.whoIsPlaying().play()
             rsltMove = self.play(pit)
-            if rsltMove and toPrint:
-                print("Joueur :" + str(1-self.isPlaying) + " joue : " + str(pit))
-                print(self.player0.loft, self.player1.loft)
-                print(self.b)
             if rsltMove == "END":
                 self.whoIsPlaying().addToLoft(48-self.nbSeedsEaten)
                 return self.endOfGame()
+
+            elif rsltMove and toPrint:
+                print("Joueur :" + str(1-self.isPlaying) + " joue : " + str(pit))
+                print(self.player0.loft, self.player1.loft)
+                print(self.b)
+            
         return self.endOfGame()
 
     def allowed(self, pit, board=None, isPlaying=None):
@@ -70,7 +72,7 @@ class Game:
                 return True
 
             
-            #print("potentially illicit starving " + str(pit))
+            print("potentially illicit starving " + str(pit))
             for coupSimule in range(6):
                 #we don't want to change the original board, just to know if it's allowed
                 b2 = deepcopy(board)
@@ -88,10 +90,10 @@ class Game:
             #print(e,file=sys.stderr)
             return False
         except EmptyPitError as e:
-            #print(e,file=sys.stderr)
+            print(e,file=sys.stderr)
             return False
         except StarvationError as e:
-            #print(e,file=sys.stderr)
+            print(e,file=sys.stderr)
             return False
 
     def play(self, pit):
