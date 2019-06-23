@@ -29,8 +29,7 @@ class IA(Player):
         elif self.algo == "minimax":
             self.algo = Minimax(self.game,[1,-1])
         elif self.algo == "alphabeta":
-            
-            self.algo = AlphaBeta(self.game,4,liste)
+            self.algo = AlphaBeta(self.game,2,liste)
     
     def play(self):
         return self.algo.play()

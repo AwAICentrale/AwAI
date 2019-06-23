@@ -28,7 +28,7 @@ class Test:
                 algo {: s} : {: f} % \n \
                 tied : {: f} % ".format(self.game.player0.algo,self.stat[0],\
                 self.game.player1.algo,self.stat[1], self.stat[2])
-t = Test("alphabeta","minimax",1)
+t = Test("minimax","alphabeta",1)
 t.run(toPrint=True)
 
 

@@ -43,7 +43,7 @@ class Game:
                 return self.endOfGame()
 
             elif rsltMove and toPrint:
-                print("Joueur :" + str(1-self.isPlaying) + " joue : " + str(pit))
+                print("Player :" + str(1-self.isPlaying) + " plays : " + str(pit))
                 print(self.player0.loft, self.player1.loft)
                 print(self.b)
             
@@ -55,9 +55,11 @@ class Game:
         """
         if board is None:
             board = self.b
+            print("REAL MOVE : " + str(pit))
+        else:
+            print("SIMULATION : Player " + str(isPlaying) + " plays " + str(pit))
         if isPlaying is None:
             isPlaying = self.isPlaying
-
         try:
             if (pit not in range(6)):
                 raise NotInYourSideError() # Pit not included in [1,6]
@@ -66,22 +68,23 @@ class Game:
                 raise EmptyPitError() # pit wanted is empty
 
             b1 = deepcopy(board)
-            self.move(pit,board=b1)
+            self.move(pit,board=b1,isPlaying=isPlaying)
             #if opponent's side is not empty
             if not(b1.emptySide(1 - isPlaying)): 
                 return True
 
             
-            print("potentially illicit starving " + str(pit))
+            print("potentially illicit starving ")
             for coupSimule in range(6):
                 #we don't want to change the original board, just to know if it's allowed
                 b2 = deepcopy(board)
-
                 #YOU MUST HAVE A SEED IN THE PIT YOU COULD PLAY
-                if board.getPit(coupSimule) != 0:
-                    self.move(coupSimule, board=b2)
+                if board.getPit(coupSimule + 6*isPlaying) != 0:
+                    self.move(coupSimule, board=b2,isPlaying=isPlaying)
                     #there is a other move that does'nt starve the opponent
-                    if not(b2.emptySide(1 - isPlaying)):
+                    print("Try : " + str(coupSimule) + " instead of " + str(pit))
+                    print(b2)
+                    if not(b2.emptySide(1-isPlaying)):
                         raise StarvationError() #so the move is not licit
 
             #It means the move has to be played but it ends the game
