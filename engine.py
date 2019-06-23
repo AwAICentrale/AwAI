@@ -16,32 +16,32 @@ class Game:
         self.isPlaying = 0
         self.nbSeedsEaten = 0
 
-    def setPlayers(self, player1, player2):
+    def setPlayers(self, player0, player1):
         """You have to call this function to create the type of the players 
         before the game starts"""
+        if player0 in self.algosAvailable:
+            self.player0 = IA(player0, self)
+        else:
+            self.player0 = Human(self)
         if player1 in self.algosAvailable:
-            self.player1 = IA(player1, self)
+           self.player1 = IA(player1, self)
         else:
             self.player1 = Human(self)
-        if player2 in self.algosAvailable:
-           self.player2 = IA(player2, self)
-        else:
-            self.player2 = Human(self)
     
     def runGame(self,toPrint=True):
         """The main function that runs the game. We stop the loop if 
         the loft of a player is 24 or more or if the number of seeds on the
         board is below nbSeedsEnd."""
         while (self.nbSeedsEaten < 48 - self.nbSeedsEnd) \
-        and max(self.player1.loft,self.player2.loft)<=24 \
+        and max(self.player0.loft,self.player1.loft)<=24 \
         and not(self.nbSeedsEaten == 46 and self.endGameIsBlocked()):
             #time.sleep(0.01)
             pit = self.whoIsPlaying().play()
             rsltMove = self.play(pit)
             if rsltMove and toPrint:
-                print(self.b)
                 print("Joueur :" + str(self.isPlaying) + " joue : " + str(pit))
-                print(self.player1.loft, self.player2.loft)
+                print(self.player0.loft, self.player1.loft)
+                print(self.b)
             if rsltMove == "END":
                 self.whoIsPlaying().addToLoft(48-self.nbSeedsEaten)
                 return self.endOfGame()
@@ -69,8 +69,8 @@ class Game:
             if not(b1.emptySide(1 - isPlaying)): 
                 return True
 
-
-            #print("potentially illicit starving")
+            
+            #print("potentially illicit starving " + str(pit))
             for coupSimule in range(6):
                 #we don't want to change the original board, just to know if it's allowed
                 b2 = deepcopy(board)
@@ -85,7 +85,7 @@ class Game:
             #It means the move has to be played but it ends the game
             return "END" 
         except NotInYourSideError as e:
-            print(e,file=sys.stderr)
+            #print(e,file=sys.stderr)
             return False
         except EmptyPitError as e:
             #print(e,file=sys.stderr)
@@ -139,23 +139,23 @@ class Game:
 
     def whoIsPlaying(self):
         if self.isPlaying == 0:
-            return self.player1
+            return self.player0
         else:
-            return self.player2
+            return self.player1
 
     def endOfGame(self):
         print(self.b)
-        if self.player1.loft > self.player2.loft: #return nb of the inner
+        if self.player0.loft > self.player1.loft: #return nb of the inner
+            return self.player0
+        elif self.player0.loft < self.player1.loft:
             return self.player1
-        elif self.player1.loft < self.player2.loft:
-            return self.player2
         else:
             return None
 
     def endGameIsBlocked(self):
         if self.b.board == [1,0,0,0,0,0,1,0,0,0,0,0]:
+            self.player0.addToLoft(1)
             self.player1.addToLoft(1)
-            self.player2.addToLoft(1)
             self.b = [0]*12
             return True
         return False
@@ -165,7 +165,7 @@ class Board:
         self.board = [4 for i in range(12)]
 
     def __repr__(self):
-        s="  =======================================\n"
+        s="  ====================J0=================\n"
         s+="  ||"
         for k in range(11, 5, -1):              #la partie haute
             if self.board[k]//10 == 0:
@@ -180,7 +180,7 @@ class Board:
                 s+=" " + str(self.board[k])+ "  | "
             else:                               #si le nb de graine est >= 10
                 s+=" "+ str(self.board[k])+ " | "
-        s+="|\n  ======================================="
+        s+="|\n  ====================J1================="
         return s
 
     def getPit(self, k):

@@ -16,7 +16,7 @@ class Minimax:
                 seedsEatenA = self.game.move(moveA,board=b1,isPlaying=self.game.isPlaying)
                 for moveB in range(6):
                     gainMoveAB=float("inf")
-                    if self.game.allowed(moveB,board=b1):
+                    if self.game.allowed(moveB,board=b1,isPlaying=1-self.game.isPlaying):
                         #Move A and B are licit 
                         seedsEatenB = self.game.move(moveA,board=b1,isPlaying=1-self.game.isPlaying)
                         gainMoveAB = self.gain(b1,self.game.isPlaying, seedsEatenA, seedsEatenB)

@@ -9,16 +9,16 @@ class AlphaBeta:
     def play(self):
         eval, move = self.playRec(self.depth, float("-inf"), float("inf"),   \
                     self.game.b, self.game.isPlaying,       \
-                    self.game.player1.loft,self.game.player2.loft)
+                    self.game.player0.loft,self.game.player1.loft)
         return move
 
-    def playRec(self, depth, alpha, beta, board, isPlaying, loft1, loft2):
+    def playRec(self, depth, alpha, beta, board, isPlaying, loft0, loft1):
         # we stop the simulation if this part of the simulation give us a winner.
-        if (depth == 0) or (loft1 > 24) or (loft2 > 24):
+        if (depth == 0) or (loft0 > 24) or (loft1 > 24):
             # We declare attribute that will be used fo the gains
             self.gainBoard = board
-            self.gainLoft1 = loft1
-            self.gainLoft2 = loft2
+            self.gainloft0 = loft0
+            self.gainloft1 = loft1
             return self.gainMAB(), -1
         
         bestMove = "END"
@@ -26,14 +26,14 @@ class AlphaBeta:
         if isPlaying == self.game.isPlaying:
             maxEval = -float('inf')
             for move in range(6):
-                if self.game.allowed(move,board=board):
+                if self.game.allowed(move,board=board,isPlaying=isPlaying):
                     b1 = deepcopy(board)
                     seedsEaten = self.game.move(move, board=b1, isPlaying=isPlaying)
                     if isPlaying == 0:
-                        loft1 += seedsEaten
+                        loft0 += seedsEaten
                     else:
-                        loft2 += seedsEaten
-                    eval, m = self.playRec(depth-1, alpha, beta, b1, 1-isPlaying, loft1, loft2)
+                        loft1 += seedsEaten
+                    eval, m = self.playRec(depth-1, alpha, beta, b1, 1-isPlaying, loft0, loft1)
                     if eval > maxEval:
                         maxEval = eval
                         bestMove = move
@@ -45,14 +45,14 @@ class AlphaBeta:
         else:
             minEval = float('inf')
             for move in range(6):
-                if self.game.allowed(move,board=board):
+                if self.game.allowed(move,board=board,isPlaying=isPlaying):
                     b1 = deepcopy(board)
                     seedsEaten = self.game.move(move, board=b1, isPlaying=isPlaying)
                     if isPlaying == 0:
-                        loft1 += seedsEaten
+                        loft0 += seedsEaten
                     else:
-                        loft2 += seedsEaten
-                    eval, m = self.playRec(depth-1, alpha, beta, b1, 1-isPlaying, loft1, loft2)
+                        loft1 += seedsEaten
+                    eval, m = self.playRec(depth-1, alpha, beta, b1, 1-isPlaying, loft0, loft1)
                     if eval < minEval:
                         minEval = eval
                         bestMove = move
@@ -73,21 +73,21 @@ class AlphaBeta:
     def gainMAB0(self):
         """This gain updates the value of gainMAB to inf if we won and to -inf
         if we lost"""
-        if (self.game.isPlaying == 0 and self.gainLoft1 > 24) or \
-           (self.game.isPlaying == 1 and self.gainLoft2 > 24):
+        if (self.game.isPlaying == 0 and self.gainloft0 > 24) or \
+           (self.game.isPlaying == 1 and self.gainloft1 > 24):
             return float('inf')
-        elif (self.game.isPlaying == 1 and self.gainLoft1 > 24) or \
-             (self.game.isPlaying == 0 and self.gainLoft2 > 24):
+        elif (self.game.isPlaying == 1 and self.gainloft0 > 24) or \
+             (self.game.isPlaying == 0 and self.gainloft1 > 24):
             return -float('inf')
         else:
             return 0
     
     def gainMAB1(self):
                    #return our wined seeds
-        return (self.gainLoft1*(1-self.game.isPlaying) + self.gainLoft2*self.game.isPlaying) /24
+        return (self.gainloft0*(1-self.game.isPlaying) + self.gainloft1*self.game.isPlaying) /24
     
     def gainMAB2(self):     #return our loosed seeds
-        return (self.gainLoft1*self.game.isPlaying + self.gainLoft2*(1-self.game.isPlaying)) /24
+        return (self.gainloft0*self.game.isPlaying + self.gainloft1*(1-self.game.isPlaying)) /24
     
     def gainMAB3(self):
         """This gain returns a bad score if you have many pits 
