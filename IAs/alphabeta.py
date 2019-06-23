@@ -9,15 +9,14 @@ class AlphaBeta:
     def play(self):
         eval, move = self.playRec(self.depth, float("-inf"), float("inf"),   \
                     self.game.b, self.game.isPlaying,       \
-                    self.game.player1.loft, self.game.player2.loft)
+                    self.game.player1.loft,self.game.player2.loft)
         return move
 
     def playRec(self, depth, alpha, beta, board, isPlaying, loft1, loft2):
         # we stop the simulation if this part of the simulation give us a winner.
-        if (depth == 0) or (loft1 >= 24) or (loft2 >= 24):
+        if (depth == 0) or (loft1 > 24) or (loft2 > 24):
             # We declare attribute that will be used fo the gains
             self.gainBoard = board
- 
             self.gainLoft1 = loft1
             self.gainLoft2 = loft2
             return self.gainMAB(), -1
