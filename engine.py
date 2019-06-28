@@ -16,15 +16,15 @@ class Game:
         self.isPlaying = 0
         self.nbSeedsEaten = 0
 
-    def setPlayers(self, player0, player1):
+    def setPlayers(self, player0, player1,data0=None, data1=None):
         """You have to call this function to create the type of the players 
         before the game starts"""
         if player0 in self.algosAvailable:
-            self.player0 = IA(player0, self)
+            self.player0 = IA(player0, self, data=data0)
         else:
             self.player0 = Human(self)
         if player1 in self.algosAvailable:
-           self.player1 = IA(player1, self)
+           self.player1 = IA(player1, self, data=data1)
         else:
             self.player1 = Human(self)
     

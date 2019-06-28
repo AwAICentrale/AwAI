@@ -3,16 +3,18 @@ from engine import *
 class Test:
     """This class is meant to be the class that provides the tests between the IAs
     You shall provide the name of the two algorithms you want to get stats on"""
-    def __init__(self,algo0,algo1, nbGame):
+    def __init__(self,algo0,algo1,nbGame,data0=None,data1=None):
         self.nbGame = nbGame
         self.stat = [0,0,0]
         self.algo0 = algo0
         self.algo1 = algo1
+        self.data0 = data0
+        self.data1 = data1
 
     def run(self,toPrint=True):
         for i in range (self.nbGame):
             self.game = Game()
-            self.game.setPlayers(self.algo0,self.algo1)
+            self.game.setPlayers(self.algo0,self.algo1,self.data0,self.data1)
             winner = self.game.runGame(toPrint)
             if winner == self.game.player0:
                 self.stat[0] += 1 

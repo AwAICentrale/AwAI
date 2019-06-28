@@ -19,17 +19,20 @@ class Player(ABC):
 
 class IA(Player):
     """docstring for Player."""
-    def __init__(self, algo, game):
+    def __init__(self, algo, game, data):
         super().__init__(game)
         self.algo = algo
-        liste = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
-        liste2 = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
+        
         if self.algo == "alea":
             self.algo = Alea(self.game)
         elif self.algo == "minimax":
-            self.algo = Minimax(self.game,[1,-1])
+            if data is None:
+                data = [1,-1]
+            self.algo = Minimax(self.game,data)
         elif self.algo == "alphabeta":
-            self.algo = AlphaBeta(self.game,2,liste)
+            if data is None:
+                data = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]        
+            self.algo = AlphaBeta(self.game,2,data) # data is listeCoeffGain
     
     def play(self):
         return self.algo.play()
