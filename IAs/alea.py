@@ -1,7 +1,7 @@
 from copy import deepcopy
 from random import randrange
 
-class Random:
+class Alea:
     def __init__(self,game):
         self.game = game
     def play(self):

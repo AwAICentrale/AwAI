@@ -12,7 +12,7 @@ class Game:
         self.b = Board()
         # Below this number of seeds the game stops
         self.nbSeedsEnd=nbSeedsEnd 
-        self.algosAvailable = ["random","alphabeta","minimax"]
+        self.algosAvailable = ["alea","alphabeta","minimax"]
         self.isPlaying = 0
         self.nbSeedsEaten = 0
 

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from IAs.minimax import Minimax
-from IAs.random import Random
+from IAs.alea import Alea
 from IAs.alphabeta import AlphaBeta
 
 class Player(ABC):
@@ -24,8 +24,8 @@ class IA(Player):
         self.algo = algo
         liste = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
         liste2 = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
-        if self.algo == "random":
-            self.algo = Random(self.game)
+        if self.algo == "alea":
+            self.algo = Alea(self.game)
         elif self.algo == "minimax":
             self.algo = Minimax(self.game,[1,-1])
         elif self.algo == "alphabeta":
