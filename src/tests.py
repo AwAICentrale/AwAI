@@ -13,7 +13,6 @@ class Test:
         self.data0 = data0
         self.data1 = data1
 
-    # TODO refactor self.game (absurd)
     def run(self):
         for i in range(self.nb_game):
             self.game = Game()

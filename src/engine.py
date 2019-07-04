@@ -68,9 +68,9 @@ class Game:
         """
         if board is None:
             board = self.b
-            logging.debug("_r_e_a_l _m_o_v_e : " + str(pit))
+            logging.debug("REAL MOVE: " + str(pit))
         else:
-            logging.debug("_s_i_m_u_l_a_t_i_o_n : _player " + str(is_playing) + " plays " + str(pit))
+            logging.debug("SIMULATION : _player " + str(is_playing) + " plays " + str(pit))
         if is_playing is None:
             is_playing = self.is_playing
         try:
@@ -86,7 +86,7 @@ class Game:
             if not (b1.empty_side(1 - is_playing)):
                 return True
 
-            logging.debug("potentially illicit starving ")
+            logging.debug("Potentially illicit starving ")
             for move_simulated in range(6):
                 # we don't want to change the original board, just to know if it's allowed
                 b2 = deepcopy(board)
@@ -94,7 +94,7 @@ class Game:
                 if board.get_pit(move_simulated + 6 * is_playing) != 0:
                     self.move(move_simulated, board=b2, is_playing=is_playing)
                     # there is a other move that does'nt starve the opponent
-                    logging.debug("try : " + str(move_simulated) + " instead of " + str(pit))
+                    logging.debug("Try : " + str(move_simulated) + " instead of " + str(pit))
                     logging.debug(b2)
                     if not (b2.empty_side(1 - is_playing)):
                         raise StarvationError()  # so the move is not licit
