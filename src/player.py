@@ -15,13 +15,13 @@ class Player(ABC):
     def play(self):
         pass
 
-    def addToLoft(self, nb):
-        self.game.nbSeedsEaten += nb
+    def add_to_loft(self, nb):
+        self.game.nb_seeds_eaten += nb
         self.loft += nb
 
 
 class IA(Player):
-    """docstring for Player."""
+    """docstring for player."""
 
     def __init__(self, algo, game, data):
         super().__init__(game)
@@ -36,7 +36,7 @@ class IA(Player):
         elif self.algo == "alphabeta":
             if data is None:
                 data = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
-            self.algo = AlphaBeta(self.game, 2, data)  # data is listeCoeffGain
+            self.algo = AlphaBeta(self.game, 2, data)  # data is listecoeffgain
 
     def play(self):
         return self.algo.play()

@@ -1,4 +1,3 @@
-from copy import deepcopy
 from random import randrange
 
 
@@ -7,12 +6,12 @@ class Alea:
         self.game = game
 
     def play(self):
-        listMove = [0, 1, 2, 3, 4, 5]
-        while listMove != []:
-            moveTest = listMove.pop(randrange(0, len(listMove)))
-            rslt = self.game.allowed(moveTest)
-            if rslt:  # it is a valid move
-                return moveTest
-            if rslt == "END":
+        list_move = [0, 1, 2, 3, 4, 5]
+        while list_move:
+            move_test = list_move.pop(randrange(0, len(list_move)))
+            result = self.game.allowed(move_test)
+            if result:  # it is a valid move
+                return move_test
+            if result == "END":
                 return "END"
         return "END"

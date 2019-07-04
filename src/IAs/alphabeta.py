@@ -2,111 +2,111 @@ from copy import deepcopy
 
 
 class AlphaBeta:
-    def __init__(self, game, depth, listCoeffGain):
+    def __init__(self, game, depth, list_coeff_gain):
         self.game = game
-        self.listCoeffGain = listCoeffGain
+        self.list_coeff_gain = list_coeff_gain
         self.depth = depth
 
     def play(self):
-        eval, move = self.playRec(self.depth, float("-inf"), float("inf"), \
-                                  self.game.b, self.game.isPlaying, \
-                                  self.game.player0.loft, self.game.player1.loft)
+        evaluation, move = self.play_rec(self.depth, float("-inf"), float("inf"),
+                                   self.game.b, self.game.is_playing,
+                                   self.game.player0.loft, self.game.player1.loft)
         return move
 
-    def playRec(self, depth, alpha, beta, board, isPlaying, loft0, loft1):
+    def play_rec(self, depth, alpha, beta, board, is_playing, loft0, loft1):
         # we stop the simulation if this part of the simulation give us a winner.
         if (depth == 0) or (loft0 > 24) or (loft1 > 24):
-            # We declare attribute that will be used fo the gains
-            self.gainBoard = board
-            self.gainloft0 = loft0
-            self.gainloft1 = loft1
-            return self.gainMAB(), -1
+            # _we declare attribute that will be used fo the gains
+            self.gain_board = board
+            self.gain_loft0 = loft0
+            self.gain_loft1 = loft1
+            return self.gain(), -1
 
-        bestMove = "END"
+        best_move = "END"
 
-        if isPlaying == self.game.isPlaying:
-            maxEval = -float('inf')
+        if is_playing == self.game.is_playing:
+            max_eval = -float('inf')
             for move in range(6):
-                if self.game.allowed(move, board=board, isPlaying=isPlaying):
+                if self.game.allowed(move, board=board, is_playing=is_playing):
                     b1 = deepcopy(board)
-                    seedsEaten = self.game.move(move, board=b1, isPlaying=isPlaying)
-                    if isPlaying == 0:
-                        loft0 += seedsEaten
+                    seeds_eaten = self.game.move(move, board=b1, is_playing=is_playing)
+                    if is_playing == 0:
+                        loft0 += seeds_eaten
                     else:
-                        loft1 += seedsEaten
-                    eval, m = self.playRec(depth - 1, alpha, beta, b1, 1 - isPlaying, loft0, loft1)
-                    if eval > maxEval:
-                        maxEval = eval
-                        bestMove = move
+                        loft1 += seeds_eaten
+                    eval, m = self.play_rec(depth - 1, alpha, beta, b1, 1 - is_playing, loft0, loft1)
+                    if eval > max_eval:
+                        max_eval = eval
+                        best_move = move
                     alpha = max(alpha, eval)
                     if beta <= alpha:
                         break
-            return maxEval, bestMove
+            return max_eval, best_move
 
         else:
-            minEval = float('inf')
+            min_eval = float('inf')
             for move in range(6):
-                if self.game.allowed(move, board=board, isPlaying=isPlaying):
+                if self.game.allowed(move, board=board, is_playing=is_playing):
                     b1 = deepcopy(board)
-                    seedsEaten = self.game.move(move, board=b1, isPlaying=isPlaying)
-                    if isPlaying == 0:
-                        loft0 += seedsEaten
+                    seeds_eaten = self.game.move(move, board=b1, is_playing=is_playing)
+                    if is_playing == 0:
+                        loft0 += seeds_eaten
                     else:
-                        loft1 += seedsEaten
-                    eval, m = self.playRec(depth - 1, alpha, beta, b1, 1 - isPlaying, loft0, loft1)
-                    if eval < minEval:
-                        minEval = eval
-                        bestMove = move
+                        loft1 += seeds_eaten
+                    eval, m = self.play_rec(depth - 1, alpha, beta, b1, 1 - is_playing, loft0, loft1)
+                    if eval < min_eval:
+                        min_eval = eval
+                        best_move = move
                     beta = min(beta, eval)
                     if beta <= alpha:
                         break
-            return minEval, bestMove
+            return min_eval, best_move
 
-    def gainMAB(self):
-        a, b, c, d = self.listCoeffGain
-        gain = self.gainMAB0() + \
-               a * self.gainMAB1() + \
-               b * self.gainMAB2() + \
-               c * self.gainMAB3() + \
-               d * self.gainMAB4()
+    def gain(self):
+        a, b, c, d = self.list_coeff_gain
+        gain = self.gain0() + \
+               a * self.gain1() + \
+               b * self.gain2() + \
+               c * self.gain3() + \
+               d * self.gain4()
         return gain
 
-    def gainMAB0(self):
-        """This gain updates the value of gainMAB to inf if we won and to -inf
+    def gain0(self):
+        """_this gain updates the value of gain_m_a_b to inf if we won and to -inf
         if we lost"""
-        if (self.game.isPlaying == 0 and self.gainloft0 > 24) or \
-                (self.game.isPlaying == 1 and self.gainloft1 > 24):
+        if (self.game.is_playing == 0 and self.gain_loft0 > 24) or \
+                (self.game.is_playing == 1 and self.gain_loft1 > 24):
             return float('inf')
-        elif (self.game.isPlaying == 1 and self.gainloft0 > 24) or \
-                (self.game.isPlaying == 0 and self.gainloft1 > 24):
+        elif (self.game.is_playing == 1 and self.gain_loft0 > 24) or \
+                (self.game.is_playing == 0 and self.gain_loft1 > 24):
             return -float('inf')
         else:
             return 0
 
-    def gainMAB1(self):
+    def gain1(self):
         # return our wined seeds
-        return (self.gainloft0 * (1 - self.game.isPlaying) + self.gainloft1 * self.game.isPlaying) / 24
+        return (self.gain_loft0 * (1 - self.game.is_playing) + self.gain_loft1 * self.game.is_playing) / 24
 
-    def gainMAB2(self):  # return our loosed seeds
-        return (self.gainloft0 * self.game.isPlaying + self.gainloft1 * (1 - self.game.isPlaying)) / 24
+    def gain2(self):  # return our loosed seeds
+        return (self.gain_loft0 * self.game.is_playing + self.gain_loft1 * (1 - self.game.is_playing)) / 24
 
-    def gainMAB3(self):
-        """This gain returns a bad score if you have many pits 
+    def gain3(self):
+        """_this gain returns a bad score if you have many pits
         with 1 or 2 seeds in a row and a great score if the oppoenent has many pits
         with 1 or 2 seeds in a row"""
         GAIN_MAX = 504  # 504 max score {12*[(2*1)+(2*2)+...+(2*6)]}
         gain = 0
         successive = 1  # count the number of 1 or 2 seeds in a row
-        opponent = 1 - self.game.isPlaying
-        for pit in range(6 * self.game.isPlaying, 6 + 6 * self.game.isPlaying):
-            sbp = self.game.b.getPit(pit)
+        opponent = 1 - self.game.is_playing
+        for pit in range(6 * self.game.is_playing, 6 + 6 * self.game.is_playing):
+            sbp = self.game.b.get_pit(pit)
             if (sbp == 1) or (sbp == 2):
                 gain -= 12 * sbp * successive
                 successive += 1
             else:
                 successive = 1
         for pit in range(6 * opponent, 6 + 6 * opponent):
-            sbp = self.game.b.getPit(pit)
+            sbp = self.game.b.get_pit(pit)
             if (sbp == 1) or (sbp == 2):
                 gain += 8 * sbp * successive  # opponent play first
                 successive += 1
@@ -114,15 +114,15 @@ class AlphaBeta:
                 successive = 1
         return gain / GAIN_MAX
 
-    def gainMAB4(self):
-        """This gain returns a bad score if you don't have a lot of possible moves"""
+    def gain4(self):
+        """_this gain returns a bad score if you don't have a lot of possible moves"""
         GAIN_MAX = 5
         gain = 0
-        opponent = 1 - self.game.isPlaying
-        for pit in range(6 * self.game.isPlaying, 6 + 6 * self.game.isPlaying):
-            if self.game.b.getPit(pit) > 0:
+        opponent = 1 - self.game.is_playing
+        for pit in range(6 * self.game.is_playing, 6 + 6 * self.game.is_playing):
+            if self.game.b.get_pit(pit) > 0:
                 gain += 1
         for pit in range(6 * opponent, 6 + 6 * opponent):
-            if self.game.b.getPit(pit) > 0:
+            if self.game.b.get_pit(pit) > 0:
                 gain -= 1
         return gain / GAIN_MAX  # 5 max score {+6 -1}

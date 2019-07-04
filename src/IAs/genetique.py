@@ -3,94 +3,95 @@ from src.tests import Test
 
 
 class Amelioration():
-    def __init__(self, nbGeneration, taillePopulation, nbGains, probaMutation=0.01, probaCross=0.3):
-        self.nbGeneration = nbGeneration
-        self.nbGains = nbGains
-        self.taillePopulation = taillePopulation
-        self.adn = ADN(taillePopulation, nbGains, probaMutation, probaCross)
+    def __init__(self, nb_generation, size_population, nb_gains, proba_mutation=0.01, proba_cross=0.3):
+        self.nb_generation = nb_generation
+        self.nb_gains = nb_gains
+        self.size_population = size_population
+        self.adn = ADN(size_population, nb_gains, proba_mutation, proba_cross)
 
     def amelioration(self):
-        self.majScore()
-        for i in range(self.nbGeneration):
-            self.adn.listeCoeffInit.sort(key=lambda tup: tup[1])
+        self.update_score()
+        for i in range(self.nb_generation):
+            self.adn.list_coeff_init.sort(key=lambda tup: tup[1])
             self.adn.selection()
             self.adn.cross()
             self.adn.mutation()
 
-            self.majScore()
-        self.adn.listeCoeffInit.sort(key=lambda tup: tup[1])
-        return self.adn.listeCoeffInit
+            self.update_score()
+        self.adn.list_coeff_init.sort(key=lambda tup: tup[1])
+        return self.adn.list_coeff_init
 
-    def majScore(self):
-        self.adn.listeCoeffInit.sort(key=lambda tup: tup[1])
-        for (i, (listeCoeffGain, score)) in enumerate(self.adn.listeCoeffInit[1:]):
-            gameTest = Test("alphabeta", "alphabeta", 1, self.adn.listeCoeffInit[0][0], listeCoeffGain)
-            gameTest.run()
+    def update_score(self):
+        self.adn.list_coeff_init.sort(key=lambda tup: tup[1])
+        for (i, (list_coeff_gain, score)) in enumerate(self.adn.list_coeff_init[1:]):
+            game_test = Test("alphabeta", "alphabeta", 1, self.adn.list_coeff_init[0][0], list_coeff_gain)
+            game_test.run()
             # update score
-            self.adn.listeCoeffInit[i][1] = gameTest.game.player0.loft - gameTest.game.player1.loft  # is it the best way to evaluate the score ?
-            # 27 - 12 equivalent to 25 - 10 ?
+            self.adn.list_coeff_init[i][
+                1] = game_test.game.player0.loft - game_test.game.player1.loft
+            # is it the best way to evaluate the score ? 27 - 12 equivalent to 25 - 10 ?
 
 
 class ADN:
-    def __init__(self, taillePopulation, nbGains, probaMutation,
-                 probaCross):  # crée un ensemble de solutions initiales : liste de coefficients pour minimaxAB
-        self.listeCoeffInit = []
-        self.taillePopulation = taillePopulation
-        self.nbGains = nbGains
-        self.probaMutation = probaMutation  # hig bound of genetic algorithm advice on wikipedia [0.001, 0.01]
-        self.probaCross = probaCross  # pick randomly :)
+    def __init__(self, size_population, nb_gains, proba_mutation, proba_cross):
+        # create a set of initials solutions ; solutions used by minimax ab
+        self.list_coeff_init = []
+        self.size_population = size_population
+        self.nb_gains = nb_gains
+        self.proba_mutation = proba_mutation  # hig bound of genetic algorithm advice on wikipedia [0.001, 0.01]
+        self.proba_cross = proba_cross  # pick randomly :)
 
-        for i in range(taillePopulation):
-            listeCoeffGain = []
-            for j in range(nbGains):
+        for i in range(size_population):
+            liste_coeff_gain = []
+            for j in range(nb_gains):
                 sign = random.choice([-1, 1])
-                listeCoeffGain.append(sign * random.random())
-            self.listeCoeffInit.append([listeCoeffGain, -float('inf')])
+                liste_coeff_gain.append(sign * random.random())
+            self.list_coeff_init.append([liste_coeff_gain, -float('inf')])
 
-    def selection(self):  # sélectionne les solutions avec les scores les plus élevés et les duplique
-        self.listeCoeffInit.sort(key=lambda tup: tup[1])
-        n = self.taillePopulation // 2
-        self.listeCoeffInit = self.listeCoeffInit[:self.taillePopulation - n] + [
-            self.listeCoeffInit[self.taillePopulation - n + k] for k in range(n)]
+    def selection(self):  # select the solutions with the better scores and duplicate them
+        self.list_coeff_init.sort(key=lambda tup: tup[1])
+        n = self.size_population // 2
+        self.list_coeff_init = self.list_coeff_init[:self.size_population - n] + [
+            self.list_coeff_init[self.size_population - n + k] for k in range(n)]
 
-    def mutation(self):  # certains coefficients mutent
-        for k in range(self.taillePopulation):
-            for i in range(self.nbGains):
+    def mutation(self):  # some coeff mutate
+        for k in range(self.size_population):
+            for i in range(self.nb_gains):
                 r = random.random()
-                if r < self.probaMutation:
+                if r < self.proba_mutation:
                     sign = random.choice([-1, 1])
-                    self.listeCoeffInit[k][0][i] = sign * random.random()
+                    self.list_coeff_init[k][0][i] = sign * random.random()
 
-    def cross(self):  # on choisit 2 solutions, on les remplace par des croisements de ces 2 solutions
-        self.listeCoeffInit.sort(key=lambda tup: tup[1])
-        n = self.taillePopulation // 2
+    def cross(self):  # we choose 2 solutions, we replace them by crossing of themselves
+        self.list_coeff_init.sort(key=lambda tup: tup[1])
+        n = self.size_population // 2
 
-        def repartition(longueur):  # gère de quel parent provient quel gène
+        def repartition(length):  # handles which gen comes from which genitor
             a = []
             b = []
-            for k in range(longueur):
-                r = random.random()
-                if r < 0.5:
+            for k in range(length):
+                rand = random.random()
+                if rand < 0.5:
                     a.append(k)
                 else:
                     b.append(k)
             return a, b
 
-        for i, (papa, mama) in enumerate(zip(self.listeCoeffInit[:n], self.listeCoeffInit[n:])):
+        for i, (papa, mama) in enumerate(zip(self.list_coeff_init[:n], self.list_coeff_init[n:])):
             r = random.random()
-            if r < self.probaCross:
-                fils1 = [0] * self.nbGains
-                fils2 = [0] * self.nbGains
+            if r < self.proba_cross:
+                son1 = [0] * self.nb_gains
+                son2 = [0] * self.nb_gains
 
-                a, b = repartition(self.nbGains)
+                a, b = repartition(self.nb_gains)
 
                 for ind in a:
-                    fils1[ind] = papa[0][ind]
-                    fils2[ind] = mama[0][ind]
+                    son1[ind] = papa[0][ind]
+                    son2[ind] = mama[0][ind]
 
                 for ind in b:
-                    fils1[ind] = mama[0][ind]
-                    fils2[ind] = papa[0][ind]
+                    son1[ind] = mama[0][ind]
+                    son2[ind] = papa[0][ind]
 
-                self.listeCoeffInit[i] = [fils1, -float('inf')]
-                self.listeCoeffInit[i+n] = [fils2, -float('inf')]
+                self.list_coeff_init[i] = [son1, -float('inf')]
+                self.list_coeff_init[i + n] = [son2, -float('inf')]
