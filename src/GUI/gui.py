@@ -6,7 +6,8 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
+
 
 class Ui_AwAI(object):
     def setupUi(self, AwAI):
@@ -140,8 +141,10 @@ class Ui_AwAI(object):
     def retranslateUi(self, AwAI):
         _translate = QtCore.QCoreApplication.translate
         AwAI.setWindowTitle(_translate("AwAI", "AwAI"))
-        self.label_2.setText(_translate("AwAI", "<html><head/><body><p><img src=\":/newPrefix/awai.png\"/></p></body></html>"))
-        self.label.setText(_translate("AwAI", "<html><head/><body><p align=\"center\"><img src=\":/newPrefix/board.png\"/></p></body></html>"))
+        self.label_2.setText(
+            _translate("AwAI", "<html><head/><body><p><img src=\":/newPrefix/awai.png\"/></p></body></html>"))
+        self.label.setText(_translate("AwAI",
+                                      "<html><head/><body><p align=\"center\"><img src=\":/newPrefix/board.png\"/></p></body></html>"))
         self.menuOpen.setTitle(_translate("AwAI", "Open"))
         self.toolBar.setWindowTitle(_translate("AwAI", "toolBar"))
         self.actionNewGame.setText(_translate("AwAI", "&New Game"))
@@ -151,14 +154,15 @@ class Ui_AwAI(object):
         self.actionQuit.setIconText(_translate("AwAI", "Quit"))
         self.actionQuit.setShortcut(_translate("AwAI", "Ctrl+Q"))
 
+
 import image_rc
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     AwAI = QtWidgets.QMainWindow()
     ui = Ui_AwAI()
     ui.setupUi(AwAI)
     AwAI.show()
     sys.exit(app.exec_())
-
