@@ -13,11 +13,10 @@ class Test:
         self.data0 = data0
         self.data1 = data1
 
-    # TODO refactor self.game (absurd)
     def run(self):
         for i in range(self.nb_game):
-            self.game = Game()
-            self.game.set_players(self.algo0, self.algo1, self.data0, self.data1)
+            game = Game()
+            game.set_players(self.algo0, self.algo1, self.data0, self.data1)
             winner = self.game.run_game()
             if winner == self.game.player0:
                 self.stat[0] += 1
@@ -25,10 +24,10 @@ class Test:
                 self.stat[1] += 1
             else:
                 self.stat[2] += 1
-            print(self.game.player0.loft, self.game.player1.loft)
+            print(game.player0.loft, game.player1.loft)
         return [e / self.nb_game for e in self.stat]
 
     def __repr__(self):
-        return f"algo {self.game.player0.algo: s} : {self.stat[0]: f} % \n \
-                algo {self.game.player1.algo: s} : {self.stat[1]: f} % \n \
+        return f"algo {self.algo0: s} : {self.stat[0]: f} % \n \
+                algo {self.algo1: s} : {self.stat[1]: f} % \n \
                 tied : {self.stat[2]: f} % "
