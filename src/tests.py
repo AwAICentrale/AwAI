@@ -1,4 +1,5 @@
 from src.engine import *
+from tqdm import tqdm
 
 
 class Test:
@@ -14,7 +15,7 @@ class Test:
         self.data1 = data1
 
     def run(self):
-        for i in range(self.nb_game):
+        for i in tqdm(range(self.nb_game)):
             self.game = Game()
             self.game.set_players(self.algo0, self.algo1, self.data0, self.data1)
             winner = self.game.run_game()
@@ -24,7 +25,7 @@ class Test:
                 self.stat[1] += 1
             else:
                 self.stat[2] += 1
-            print(self.game.player0.loft, self.game.player1.loft)
+            # print(self.game.player0.loft, self.game.player1.loft)
         return [e / self.nb_game for e in self.stat]
 
     def __repr__(self):
