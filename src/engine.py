@@ -56,7 +56,8 @@ class Game:
             board = self.b
             print("REAL MOVE : " + str(pit))
         else:
-            print("SIMULATION : Player " + str(isPlaying) + " plays " + str(pit))
+            pass
+            # print("SIMULATION : Player " + str(isPlaying) + " plays " + str(pit))
         if isPlaying is None:
             isPlaying = self.isPlaying
         try:
@@ -80,8 +81,8 @@ class Game:
                 if board.getPit(coupSimule + 6 * isPlaying) != 0:
                     self.move(coupSimule, board=b2, isPlaying=isPlaying)
                     # there is a other move that does'nt starve the opponent
-                    print("Try : " + str(coupSimule) + " instead of " + str(pit))
-                    print(b2)
+                    # print("Try : " + str(coupSimule) + " instead of " + str(pit))
+                    # print(b2)
                     if not (b2.emptySide(1 - isPlaying)):
                         raise StarvationError()  # so the move is not licit
 
@@ -91,10 +92,10 @@ class Game:
             # print(e,file=sys.stderr)
             return False
         except EmptyPitError as e:
-            print(e, file=sys.stderr)
+            # print(e, file=sys.stderr)
             return False
         except StarvationError as e:
-            print(e, file=sys.stderr)
+            # print(e, file=sys.stderr)
             return False
 
     def play(self, pit):
