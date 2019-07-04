@@ -2,7 +2,21 @@ from src.player import IA, Human
 from copy import deepcopy
 from src.exceptions import StarvationError, EmptyPitError, NotInYourSideError
 
-import sys
+import argparse
+import logging
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-v", "--verbose", default=0,
+                    help="increase verbosity: 0 = only warnings, 1 = info, 2 = debug. No number means info. Default is no verbosity",
+                    action='count')
+args = parser.parse_args()
+logger = logging.getLogger()
+if args.verbose == 0:
+    logger.setLevel(logging.WARN)
+elif args.verbose == 1:
+    logger.setLevel(logging.INFO)
+elif args.verbose == 2:
+    logger.setLevel(logging.DEBUG)
 
 
 # TODO add a time clock that provide you the average execution time of one game
@@ -27,7 +41,7 @@ class Game:
         else:
             self.player1 = Human(self)
 
-    def runGame(self, toPrint=True):
+    def runGame(self):
         """The main function that runs the game. We stop the loop if 
         the loft of a player is 24 or more or if the number of seeds on the
         board is below nbSeedsEnd."""
@@ -41,10 +55,10 @@ class Game:
                 self.whoIsPlaying().addToLoft(48 - self.nbSeedsEaten)
                 return self.endOfGame()
 
-            elif rsltMove and toPrint:
-                print("Player :" + str(1 - self.isPlaying) + " plays : " + str(pit))
-                print(self.player0.loft, self.player1.loft)
-                print(self.b)
+            elif rsltMove:
+                logging.info("Player :" + str(1 - self.isPlaying) + " plays : " + str(pit))
+                logging.info(f"{self.player0.loft}, {self.player1.loft}")
+                logging.info(self.b)
 
         return self.endOfGame()
 
@@ -54,14 +68,13 @@ class Game:
         """
         if board is None:
             board = self.b
-            print("REAL MOVE : " + str(pit))
+            logging.debug("REAL MOVE : " + str(pit))
         else:
-            pass
-            # print("SIMULATION : Player " + str(isPlaying) + " plays " + str(pit))
+            logging.debug("SIMULATION : Player " + str(isPlaying) + " plays " + str(pit))
         if isPlaying is None:
             isPlaying = self.isPlaying
         try:
-            if (pit not in range(6)):
+            if pit not in range(6):
                 raise NotInYourSideError()  # Pit not included in [1,6]
 
             if board.getPit(pit + 6 * isPlaying) == 0:
@@ -73,7 +86,7 @@ class Game:
             if not (b1.emptySide(1 - isPlaying)):
                 return True
 
-            print("potentially illicit starving ")
+            logging.debug("Potentially illicit starving ")
             for coupSimule in range(6):
                 # we don't want to change the original board, just to know if it's allowed
                 b2 = deepcopy(board)
@@ -81,21 +94,21 @@ class Game:
                 if board.getPit(coupSimule + 6 * isPlaying) != 0:
                     self.move(coupSimule, board=b2, isPlaying=isPlaying)
                     # there is a other move that does'nt starve the opponent
-                    # print("Try : " + str(coupSimule) + " instead of " + str(pit))
-                    # print(b2)
+                    logging.debug("Try : " + str(coupSimule) + " instead of " + str(pit))
+                    logging.debug(b2)
                     if not (b2.emptySide(1 - isPlaying)):
                         raise StarvationError()  # so the move is not licit
 
             # It means the move has to be played but it ends the game
             return "END"
         except NotInYourSideError as e:
-            # print(e,file=sys.stderr)
+            logging.debug(e)
             return False
         except EmptyPitError as e:
-            # print(e, file=sys.stderr)
+            logging.debug(e)
             return False
         except StarvationError as e:
-            # print(e, file=sys.stderr)
+            logging.debug(e)
             return False
 
     def play(self, pit):
@@ -148,7 +161,7 @@ class Game:
             return self.player1
 
     def endOfGame(self):
-        print(self.b)
+        logging.info(self.b)
         if self.player0.loft > self.player1.loft:  # return nb of the inner
             return self.player0
         elif self.player0.loft < self.player1.loft:

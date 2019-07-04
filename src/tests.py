@@ -14,11 +14,11 @@ class Test:
         self.data1 = data1
 
     # TODO refactor self.game (absurd)
-    def run(self, toPrint=True):
+    def run(self):
         for i in range(self.nbGame):
             self.game = Game()
             self.game.setPlayers(self.algo0, self.algo1, self.data0, self.data1)
-            winner = self.game.runGame(toPrint)
+            winner = self.game.runGame()
             if winner == self.game.player0:
                 self.stat[0] += 1
             elif winner == self.game.player1:

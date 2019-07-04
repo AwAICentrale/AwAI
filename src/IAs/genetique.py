@@ -25,7 +25,7 @@ class Amelioration():
         self.adn.listeCoeffInit.sort(key=lambda tup: tup[1])
         for (i, (listeCoeffGain, score)) in enumerate(self.adn.listeCoeffInit[1:]):
             gameTest = Test("alphabeta", "alphabeta", 1, self.adn.listeCoeffInit[0][0], listeCoeffGain)
-            gameTest.run(toPrint=False)
+            gameTest.run()
             # update score
             self.adn.listeCoeffInit[i][1] = gameTest.game.player0.loft - gameTest.game.player1.loft  # is it the best way to evaluate the score ?
             # 27 - 12 equivalent to 25 - 10 ?
