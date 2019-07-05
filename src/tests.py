@@ -1,7 +1,6 @@
 from src.engine import *
 from tqdm import tqdm
 from multiprocessing import Pool
-from functools import partial
 import numpy as np
 import psutil
 import time
@@ -35,21 +34,19 @@ class Test:
         print(f"The calculus has taken {duration}s.")
         return np.array(self.stat).sum(axis=0)
 
-
-    def run_on_cpu(self, no_cpu, n):
-        stat = [0,0,0]
-        for _ in tqdm(range(n)):
-            self.game = Game()
-            self.game.set_players(self.algo0, self.algo1, self.data0, self.data1)
-            winner = self.game.run_game()
-            if winner == self.game.player0:
-                stat[0] += 1
-            elif winner == self.game.player1:
-                stat[1] += 1
-            else:
-                stat[2] += 1
-            # print(self.game.player0.loft, self.game.player1.loft)
-        print(f"End process {no_cpu}")
+    def run_on_cpu(self, n):
+        stat = [0, 0, 0]
+        self.game = Game()
+        self.game.set_players(self.algo0, self.algo1, self.data0, self.data1)
+        winner = self.game.run_game()
+        if winner == self.game.player0:
+            stat[0] += 1
+        elif winner == self.game.player1:
+            stat[1] += 1
+        else:
+            stat[2] += 1
+        # print(f"game : {n}"
+        # print(self.game.player0.loft, self.game.player1.loft)
         return stat
 
     def run_on_all_cores(self):
@@ -57,18 +54,20 @@ class Test:
         print("Start calculus")
         nb_cpus = psutil.cpu_count()
         p = Pool(nb_cpus)
-        print(nb_cpus)
-        run = partial(self.run_on_cpu, n=self.nb_games // nb_cpus)
-        self.stat = p.map(run, [no_cpu for no_cpu in range(nb_cpus)])
+        self.stat = []
+        with tqdm(total=self.nb_games) as pbar:
+            for stat in p.imap_unordered(self.run_on_cpu, range(self.nb_games)):
+                pbar.update()
+                self.stat.append(stat)
         p.close()
         p.join()
 
         print("End main process")
         duration = time.time() - start
         self.stat = np.array(self.stat).sum(axis=0)
-        print(f"The calculus has taken {round(duration,2)}s.")
+        print(f"The calculus has taken {round(duration, 2)}s.")
 
     def __repr__(self):
         return f"algo {self.game.player0.algo: s} : {self.stat[0]: f} % \n \
-                algo {self.game.player1.algo: s} : {self.stat[1]: f} % \n \
-                tied : {self.stat[2]: f} % "
+                    algo {self.game.player1.algo: s} : {self.stat[1]: f} % \n \
+                    tied : {self.stat[2]: f} % "

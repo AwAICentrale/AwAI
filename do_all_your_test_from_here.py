@@ -7,6 +7,11 @@ from src.tests import Test
 # t = Test("alphabeta", "minimax", 1200)
 # t.run()
 
-t = Test("alphabeta", "alea", 1200)
+t = Test("alea", "alea", 1000)
+t.run()
+
+t = Test("alea", "alea", 1000)
 t.run_on_all_cores()
 print(t.stat)
+
+
