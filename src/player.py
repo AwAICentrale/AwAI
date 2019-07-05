@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from src.IAs.minimax import Minimax
-from src.IAs.alea import Alea
-from src.IAs.alphabeta import AlphaBeta
+from src.AIs.minimax import Minimax
+from src.AIs.alea import Alea
+from src.AIs.alphabeta import AlphaBeta
 
 
 class Player(ABC):
@@ -20,7 +20,7 @@ class Player(ABC):
         self.loft += nb
 
 
-class IA(Player):
+class AI(Player):
     """docstring for player."""
 
     def __init__(self, algo, game, data):

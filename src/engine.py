@@ -1,4 +1,4 @@
-from src.player import IA, Human
+from src.player import AI, Human
 from copy import deepcopy
 from src.exceptions import StarvationError, EmptyPitError, NotInYourSideError
 
@@ -33,11 +33,11 @@ class Game:
         """you have to call this function to create the type of the players
         before the game starts"""
         if player0 in self.algos_available:
-            self.player0 = IA(player0, self, data=data0)
+            self.player0 = AI(player0, self, data=data0)
         else:
             self.player0 = Human(self)
         if player1 in self.algos_available:
-            self.player1 = IA(player1, self, data=data1)
+            self.player1 = AI(player1, self, data=data1)
         else:
             self.player1 = Human(self)
 
