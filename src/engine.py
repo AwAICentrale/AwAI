@@ -25,7 +25,7 @@ class Game:
         self.b = Board()
         # _below this number of seeds the game stops
         self.nb_seeds_end = nb_seeds_end
-        self.algos_available = ["alea", "alphabeta", "minimax"]
+        self.algos_available = ["alea", "alphabeta", "minimax", "aleaalphabeta", "alphabetabegin", "alphabetamidgame"]
         self.is_playing = 0
         self.nb_seeds_eaten = 0
 
@@ -54,7 +54,9 @@ class Game:
             if rslt_move == "END":
                 self.who_is_playing().add_to_loft(48 - self.nb_seeds_eaten)
                 return self.end_of_game()
-
+            #the game stopped, the staying seeds aren't touched
+            elif rslt_move == "STOP": 
+                return self.end_of_game()
             elif rslt_move:
                 logging.info("player :" + str(1 - self.is_playing) + " plays : " + str(pit))
                 logging.info(f"{self.player0.loft}, {self.player1.loft}")
@@ -116,6 +118,8 @@ class Game:
         it takes one argument : number of the pit wanted to be played"""
         if pit == "END":
             return "END"
+        if pit == "STOP":
+            return "STOP"
         else:
             self.move(pit)
             return True

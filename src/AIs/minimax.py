@@ -9,7 +9,7 @@ class Minimax:
         self.list_coeff_gain = list_coeff_gain
 
     def play(self):
-        best_move = "_e_n_d"
+        best_move = "END"
         h_gain = float("-inf")
         for move_a in range(6):  # we try every move possible
             gain_move_a = float("inf")

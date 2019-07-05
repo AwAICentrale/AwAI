@@ -1,17 +1,13 @@
 from src.AIs.genetique import Amelioration
 from src.tests import Test
 
-# a = Amelioration(5, 5, 4).amelioration()
-# print(a)
+a = Amelioration(5, 5, 4).amelioration()
+print(a)
 
-# t = Test("alphabeta", "minimax", 1200)
-# t.run()
+#t = Test("alea", "alphabeta", 1, 0, [-1, 1, 0, 0])
+#t.run()
 
-t = Test("alea", "alea", 1000)
-t.run()
-
-t = Test("alea", "alea", 1000)
-t.run_on_all_cores()
-print(t.stat)
-
-
+#t = Test("alphabetaendgame", "alphabetaendgame", 1)
+#t.run()
+#print(t.game.player0.loft, t.game.player1.loft)
+#print(t.stat)
