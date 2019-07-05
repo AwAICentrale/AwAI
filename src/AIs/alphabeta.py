@@ -10,8 +10,8 @@ class AlphaBeta:
 
     def play(self):
         evaluation, move = self.play_rec(self.depth, float("-inf"), float("inf"),
-                                   self.game.b, self.game.is_playing,
-                                   self.game.player0.loft, self.game.player1.loft)
+                                         self.game.b, self.game.is_playing,
+                                         self.game.player0.loft, self.game.player1.loft)
         return move
 
     def play_rec(self, depth, alpha, beta, board, is_playing, loft0, loft1):
@@ -77,10 +77,10 @@ class AlphaBeta:
         if we lost"""
         if (self.game.is_playing == 0 and self.gain_loft0 > 24) or \
                 (self.game.is_playing == 1 and self.gain_loft1 > 24):
-            return float('inf')
+            return 1000
         elif (self.game.is_playing == 1 and self.gain_loft0 > 24) or \
                 (self.game.is_playing == 0 and self.gain_loft1 > 24):
-            return -float('inf')
+            return -1000
         else:
             return 0
 
@@ -134,28 +134,29 @@ class AlphaBetaBegin(AlphaBeta):
         super().__init__(game, depth, list_coeff_gain)
         self.nb_seeds_begin = 5
         self.flag = "STOP"
-        
+
     def play(self):
         if (self.game.player0.loft >= self.nb_seeds_begin) or \
-           (self.game.player1.loft >= self.nb_seeds_begin):
+                (self.game.player1.loft >= self.nb_seeds_begin):
             return "STOP"
         return super().play()
-    
+
+
 class AlphaBetaMidgame(AlphaBeta):
     def __init__(self, game, depth, list_coeff_gain):
         super().__init__(game, depth, list_coeff_gain)
         self.nb_seeds_midgame = 19
         self.flag = "STOP"
-        
+
     def play(self):
-        #print(self.game.b)
+        # print(self.game.b)
         if (self.game.player0.loft >= self.nb_seeds_midgame) or \
-           (self.game.player1.loft >= self.nb_seeds_midgame):
+                (self.game.player1.loft >= self.nb_seeds_midgame):
             return "STOP"
-        
+
         return super().play()
-    
-#class AlphaBetaEndgame(AlphaBeta):
+
+# class AlphaBetaEndgame(AlphaBeta):
 #    def __init__(self, game, depth, list_coeff_gain):
 #        super().__init(game, depth, list_coeff_gain)
 #        self.nb_seeds_endgame = 25
