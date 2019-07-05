@@ -6,6 +6,7 @@ class AlphaBeta:
         self.game = game
         self.list_coeff_gain = list_coeff_gain
         self.depth = depth
+        self.flag = "END"
 
     def play(self):
         evaluation, move = self.play_rec(self.depth, float("-inf"), float("inf"),
@@ -22,7 +23,7 @@ class AlphaBeta:
             self.gain_loft1 = loft1
             return self.gain(), -1
 
-        best_move = "END"
+        best_move = self.flag
 
         if is_playing == self.game.is_playing:
             max_eval = -float('inf')
@@ -108,7 +109,7 @@ class AlphaBeta:
         for pit in range(6 * opponent, 6 + 6 * opponent):
             sbp = self.game.b.get_pit(pit)
             if (sbp == 1) or (sbp == 2):
-                gain += 8 * sbp * successive  # opponent play first
+                gain += 8 * sbp * successive  # opponent plays first
                 successive += 1
             else:
                 successive = 1
@@ -126,3 +127,41 @@ class AlphaBeta:
             if self.game.b.get_pit(pit) > 0:
                 gain -= 1
         return gain / GAIN_MAX  # 5 max score {+6 -1}
+
+
+class AlphaBetaBegin(AlphaBeta):
+    def __init__(self, game, depth, list_coeff_gain):
+        super().__init__(game, depth, list_coeff_gain)
+        self.nb_seeds_begin = 5
+        self.flag = "STOP"
+        
+    def play(self):
+        if (self.game.player0.loft >= self.nb_seeds_begin) or \
+           (self.game.player1.loft >= self.nb_seeds_begin):
+            return "STOP"
+        return super().play()
+    
+class AlphaBetaMidgame(AlphaBeta):
+    def __init__(self, game, depth, list_coeff_gain):
+        super().__init__(game, depth, list_coeff_gain)
+        self.nb_seeds_midgame = 19
+        self.flag = "STOP"
+        
+    def play(self):
+        #print(self.game.b)
+        if (self.game.player0.loft >= self.nb_seeds_midgame) or \
+           (self.game.player1.loft >= self.nb_seeds_midgame):
+            return "STOP"
+        
+        return super().play()
+    
+#class AlphaBetaEndgame(AlphaBeta):
+#    def __init__(self, game, depth, list_coeff_gain):
+#        super().__init(game, depth, list_coeff_gain)
+#        self.nb_seeds_endgame = 25
+#        
+#    def play(self):
+#        if (self.game.player0.loft >= self.nb_seeds_midgame) or \
+#           (self.game.player1.loft >= self.nb_seeds_midgame):
+#            return "END"
+#        super().play()

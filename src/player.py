@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
 from src.AIs.minimax import Minimax
 from src.AIs.alea import Alea
+from src.AIs.aleaalphabeta import AleaAlphaBeta
 from src.AIs.alphabeta import AlphaBeta
+from src.AIs.alphabeta import AlphaBetaBegin
+from src.AIs.alphabeta import AlphaBetaMidgame
 
 
 class Player(ABC):
@@ -29,6 +32,10 @@ class AI(Player):
 
         if self.algo == "alea":
             self.algo = Alea(self.game)
+        elif self.algo == "aleaalphabeta":
+            if data is None:
+                data = "begin"
+            self.algo = AleaAlphaBeta(self.game, data)
         elif self.algo == "minimax":
             if data is None:
                 data = [1, -1]
@@ -37,6 +44,14 @@ class AI(Player):
             if data is None:
                 data = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
             self.algo = AlphaBeta(self.game, 2, data)  # data is listecoeffgain
+        elif self.algo == "alphabetabegin":
+            if data is None:
+                data = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
+            self.algo = AlphaBetaBegin(self.game, 2, data)
+        elif self.algo == "alphabetamidgame":
+            if data is None:
+                data = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
+            self.algo = AlphaBetaMidgame(self.game, 2, data)
 
     def play(self):
         return self.algo.play()
