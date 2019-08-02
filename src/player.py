@@ -26,7 +26,7 @@ class Player(ABC):
 class AI(Player):
     """docstring for player."""
 
-    def __init__(self, algo, game, data):
+    def __init__(self, algo, game, data=None):
         super().__init__(game)
         self.algo = algo
 
@@ -64,10 +64,15 @@ class Human(Player):
     def play(self):
 
         while 1:
-            pit = input("What's your choice (1-6) ?")
             try:
-                if type(pit) != int:
+                pit = int(input("What's your choice (0-5) ? "))
+                if not(0 <= pit <= 5):
                     raise ValueError
-                return pit
+                else:
+                    result = self.game.allowed(pit)
+                    if result:
+                        return pit
+                    else:
+                        print("This move is not allowed")
             except ValueError:
-                print("Enter a value between 1 and 6 :")
+                print("You have to enter a value between 0 and 5")
