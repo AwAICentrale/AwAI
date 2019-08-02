@@ -1,8 +1,9 @@
 from PyQt5 import QtWidgets
 from src.GUI.gui import Ui_AwAI
 from src.GUI.settings import Ui_Dialog
-
+import src.GUI.image_rc
 from src.engine import *
+import sys
 
 
 class Settings(QtWidgets.QDialog, Ui_Dialog):
@@ -12,32 +13,31 @@ class Settings(QtWidgets.QDialog, Ui_Dialog):
 
     def accept(self):
         myapp.game = Game()
+        myapp.game.set_players("human", "human")
         myapp.b = myapp.game.b
         myapp.refresh()
-        for id, button in enumerate(myapp.buttons):
+        for j, button in enumerate(myapp.buttons):
             button.clicked.connect(
-                lambda state, i=id: myapp.play(i + 1))  # use lambda function to connect because we need an arg
-
-        self.destroy()
+                lambda state, i=j: myapp.play(i))  # use lambda function to connect because we need an arg
+        self.done(1)
 
     def reject(self):
-        self.destroy()
+        self.done(0)
 
 
 class MyMainWindow(QtWidgets.QMainWindow, Ui_AwAI):
     def __init__(self):
         super(MyMainWindow, self).__init__()
         self.setupUi(self)
-        self.actionNewGame.triggered.connect(self.new)
-        self.buttons = [self.pushButton_1, self.pushButton_2, self.pushButton_3, \
-                        self.pushButton_4, self.pushButton_5, self.pushButton_6, \
-                        self.pushButton_7, self.pushButton_8, self.pushButton_9, \
+        self.buttons = [self.pushButton_1, self.pushButton_2, self.pushButton_3,
+                        self.pushButton_4, self.pushButton_5, self.pushButton_6,
+                        self.pushButton_7, self.pushButton_8, self.pushButton_9,
                         self.pushButton_10, self.pushButton_11, self.pushButton_12]
 
     def play(self, pit):
-        tmp = self.game.play(pit - 6 * self.isPlaying)
+        tmp = self.game.play(pit % 6)
 
-        if tmp is not None and tmp != "END":
+        if tmp:
             self.refresh()
 
     def refresh(self):
@@ -49,7 +49,7 @@ class MyMainWindow(QtWidgets.QMainWindow, Ui_AwAI):
 
     def new(self):
         dialog = Settings()
-        sys.exit(dialog.exec_())
+        dialog.exec_()
 
     def closeEvent(self, event):
         """To close main function proper"""

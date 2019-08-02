@@ -155,8 +155,6 @@ class Ui_AwAI(object):
         self.actionQuit.setShortcut(_translate("AwAI", "Ctrl+Q"))
 
 
-import image_rc
-
 if __name__ == "__main__":
     import sys
 
