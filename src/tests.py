@@ -72,13 +72,14 @@ class Test:
                 algo {self.game.player1.algo: s} : {self.stat[1]: f} % \n \
                 tied : {self.stat[2]: f} % "
 
+
 class TestAmelioration(Test):
     def __init__(self, algo0, algo1, nb_games, stage, data0, data1):
         super().__init__(algo0, algo1, nb_games)
         self.data0 = data0
         self.data1 = data1
         self.stage = stage
-        
+
     def run(self):
         for _ in range(self.nb_games):
             self.game = Game()
@@ -97,7 +98,7 @@ class TestAmelioration(Test):
                 self.game.player0.add_to_loft(loft0)
                 self.game.player1.add_to_loft(loft1)
                 winner = self.game.run_game()
-            elif self.stage == "endgame":           
+            elif self.stage == "endgame":
                 self.game.set_players("aleaalphabeta", "aleaalphabeta", "midgame", "midgame")
                 self.game.run_game()
                 loft0 = self.game.player0.loft
@@ -113,4 +114,3 @@ class TestAmelioration(Test):
             else:
                 self.stat[2] += 1
         return np.array(self.stat)
-      

@@ -1,5 +1,6 @@
 from src.AIs.alea import Alea
 
+
 class AleaAlphaBeta(Alea):
     def __init__(self, game, stage):
         super().__init__(game)
@@ -15,9 +16,9 @@ class AleaAlphaBeta(Alea):
         nb_seeds_midgame = 19
         if stage == "begin":
             if (self.game.player0.loft >= nb_seeds_begin) or \
-               (self.game.player1.loft >= nb_seeds_begin):
+                    (self.game.player1.loft >= nb_seeds_begin):
                 return "STOP"
         if stage == "midgame":
             if (self.game.player0.loft >= nb_seeds_midgame) or \
-               (self.game.player1.loft >= nb_seeds_midgame):
+                    (self.game.player1.loft >= nb_seeds_midgame):
                 return "STOP"

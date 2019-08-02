@@ -7,7 +7,7 @@ import logging
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose", default=0,
-                    help="increase verbosity: 0 = only warnings, 1 = info, 2 = debug. No number means info. Default is no verbosity",
+                    help="increase verbosity: 0 = only warnings, 1 = info, 2 = debug. Default is no verbosity",
                     action='count')
 args = parser.parse_args()
 logger = logging.getLogger()
@@ -54,8 +54,8 @@ class Game:
             if rslt_move == "END":
                 self.who_is_playing().add_to_loft(48 - self.nb_seeds_eaten)
                 return self.end_of_game()
-            #the game stopped, the staying seeds aren't touched
-            elif rslt_move == "STOP": 
+            # the game stopped, the staying seeds aren't touched
+            elif rslt_move == "STOP":
                 return self.end_of_game()
             elif rslt_move:
                 logging.info("player :" + str(1 - self.is_playing) + " plays : " + str(pit))
