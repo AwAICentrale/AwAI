@@ -2,9 +2,10 @@
 
 # Form implementation generated from reading ui file 'settings.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
+
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -19,7 +20,7 @@ class Ui_Dialog(object):
         self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
         self.buttonBox.setGeometry(QtCore.QRect(160, 260, 191, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.gridLayoutWidget = QtWidgets.QWidget(Dialog)
         self.gridLayoutWidget.setGeometry(QtCore.QRect(50, 50, 431, 189))
@@ -86,22 +87,19 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Créer une partie"))
-        self.label.setText(_translate("Dialog",
-                                      "<html><head/><body><p><span style=\" font-weight:600;\">Player 1</span></p></body></html>"))
-        self.radioButton_3.setText(_translate("Dialog", "&Human"))
-        self.radioButton_2.setText(_translate("Dialog", "AI&1"))
-        self.radioButton.setText(_translate("Dialog", "AI&2"))
-        self.label_2.setText(_translate("Dialog",
-                                        "<html><head/><body><p><span style=\" font-weight:600;\">Player 2</span></p></body></html>"))
-        self.radioButton_6.setText(_translate("Dialog", "Hu&man"))
-        self.radioButton_5.setText(_translate("Dialog", "AI&1"))
-        self.radioButton_4.setText(_translate("Dialog", "AI&2"))
+        Dialog.setWindowTitle(_translate("Dialog", "Create a game"))
+        self.label.setText(_translate("Dialog", "<html><head/><body><p><span style=\" font-weight:600;\">Player 1</span></p></body></html>"))
+        self.radioButton_3.setText(_translate("Dialog", "Human"))
+        self.radioButton_2.setText(_translate("Dialog", "Minimax"))
+        self.radioButton.setText(_translate("Dialog", "AlphaBeta"))
+        self.label_2.setText(_translate("Dialog", "<html><head/><body><p><span style=\" font-weight:600;\">Player 2</span></p></body></html>"))
+        self.radioButton_6.setText(_translate("Dialog", "Human"))
+        self.radioButton_5.setText(_translate("Dialog", "Minimax"))
+        self.radioButton_4.setText(_translate("Dialog", "AlphaBeta"))
 
 
 if __name__ == "__main__":
     import sys
-
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
     ui = Ui_Dialog()

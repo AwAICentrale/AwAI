@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Créer une partie</string>
+   <string>Create a game</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>false</bool>
@@ -69,7 +69,7 @@
       <item>
        <widget class="QRadioButton" name="radioButton_3">
         <property name="text">
-         <string>&amp;Human</string>
+         <string>Human</string>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -85,7 +85,7 @@
       <item>
        <widget class="QRadioButton" name="radioButton_2">
         <property name="text">
-         <string>AI&amp;1</string>
+         <string>Minimax</string>
         </property>
         <attribute name="buttonGroup">
          <string notr="true">buttonGroup</string>
@@ -95,7 +95,7 @@
       <item>
        <widget class="QRadioButton" name="radioButton">
         <property name="text">
-         <string>AI&amp;2</string>
+         <string>AlphaBeta</string>
         </property>
         <attribute name="buttonGroup">
          <string notr="true">buttonGroup</string>
@@ -122,7 +122,7 @@
       <item>
        <widget class="QRadioButton" name="radioButton_6">
         <property name="text">
-         <string>Hu&amp;man</string>
+         <string>Human</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -135,7 +135,7 @@
       <item>
        <widget class="QRadioButton" name="radioButton_5">
         <property name="text">
-         <string>AI&amp;1</string>
+         <string>Minimax</string>
         </property>
         <attribute name="buttonGroup">
          <string notr="true">buttonGroup_2</string>
@@ -145,7 +145,7 @@
       <item>
        <widget class="QRadioButton" name="radioButton_4">
         <property name="text">
-         <string>AI&amp;2</string>
+         <string>AlphaBeta</string>
         </property>
         <attribute name="buttonGroup">
          <string notr="true">buttonGroup_2</string>

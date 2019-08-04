@@ -1,9 +1,10 @@
-from src.player import AI, Human
+from src.player import AI, Human, HumanGUI
 from copy import deepcopy
 from src.exceptions import StarvationError, EmptyPitError, NotInYourSideError
 
 import argparse
 import logging
+import time
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose", default=0,
@@ -21,13 +22,14 @@ elif args.verbose == 2:
 
 # TODO add a time clock that provide you the average execution time of one game
 class Game:
-    def __init__(self, nb_seeds_end=0):
+    def __init__(self, nb_seeds_end=0, GUI=False):
         self.b = Board()
         # _below this number of seeds the game stops
         self.nb_seeds_end = nb_seeds_end
         self.algos_available = ["alea", "alphabeta", "minimax", "aleaalphabeta", "alphabetabegin", "alphabetamidgame"]
         self.is_playing = 0
         self.nb_seeds_eaten = 0
+        self.GUI = GUI
 
     def set_players(self, player0, player1, data0=None, data1=None):
         """you have to call this function to create the type of the players
@@ -35,11 +37,18 @@ class Game:
         if player0 in self.algos_available:
             self.player0 = AI(player0, self, data=data0)
         else:
-            self.player0 = Human(self)
+            if self.GUI:
+                self.player0 = HumanGUI(self)
+            else:
+                self.player0 = Human(self)
+
         if player1 in self.algos_available:
             self.player1 = AI(player1, self, data=data1)
         else:
-            self.player1 = Human(self)
+            if self.GUI:
+                self.player1 = HumanGUI(self)
+            else:
+                self.player1 = Human(self)
 
     def run_game(self):
         """the main function that runs the game. _we stop the loop if
@@ -48,7 +57,7 @@ class Game:
         while (self.nb_seeds_eaten < 48 - self.nb_seeds_end) \
                 and max(self.player0.loft, self.player1.loft) <= 24 \
                 and not (self.nb_seeds_eaten == 46 and self.end_game_is_blocked()):
-            # time.sleep(0.01)
+            time.sleep(1)
             pit = self.who_is_playing().play()
             rslt_move = self.play(pit)
             if rslt_move == "END":
@@ -61,6 +70,7 @@ class Game:
                 logging.info("player :" + str(1 - self.is_playing) + " plays : " + str(pit))
                 logging.info(f"{self.player0.loft}, {self.player1.loft}")
                 logging.info(self.b)
+            print(self.b)
 
         return self.end_of_game()
 
