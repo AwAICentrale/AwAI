@@ -97,7 +97,7 @@ class HumanGUI(Player):
                 if self.human_player_move is None:
                     continue  # No entry yet
                 # we check the entry (button press, ie the player wants to move
-                pit = int(self.human_player_move)
+                pit = int(self.human_player_move) % 6
                 # we check the move integrity
                 if not (0 <= pit <= 5):
                     raise ValueError
