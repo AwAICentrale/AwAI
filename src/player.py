@@ -1,3 +1,4 @@
+import time
 from abc import ABC, abstractmethod
 from src.AIs.minimax import Minimax
 from src.AIs.alea import Alea
@@ -58,6 +59,7 @@ class AI(Player):
 
 
 class Human(Player):
+    """The CLI version of the Human player class that asks the input to the player"""
     def __init__(self, game):
         super().__init__(game)
 
@@ -71,6 +73,38 @@ class Human(Player):
                 else:
                     result = self.game.allowed(pit)
                     if result:
+                        return pit
+                    else:
+                        print("This move is not allowed")
+            except ValueError:
+                print("You have to enter a value between 0 and 5")
+
+class HumanGUI(Player):
+    """The GUI version of the Human player class We need a separate version because of the input. It's very
+    unconfortable to link the GUI button to stdin in a polymorphic way. So we use another class and the GUI
+    communicates the information through the variable human_player_move """
+
+    def __init__(self, game):
+        super().__init__(game)
+        self.human_player_move = None
+
+    def play(self):
+        while 1:
+            self.human_player_move = None
+            # we wait 0.2 seconds to not loop 10000 times each seconds without needs
+            time.sleep(0.2)
+            try:
+                if self.human_player_move is None:
+                    continue  # No entry yet
+                # we check the entry (button press, ie the player wants to move
+                pit = int(self.human_player_move) % 6
+                # we check the move integrity
+                if not (0 <= pit <= 5):
+                    raise ValueError
+                else:
+                    result = self.game.allowed(pit)
+                    if result:
+                        self.human_player_move = None
                         return pit
                     else:
                         print("This move is not allowed")
