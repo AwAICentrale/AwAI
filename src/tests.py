@@ -32,7 +32,7 @@ class Test:
                 self.stat[2] += 1
         duration = time.time() - start
         print(f"The calculus has taken {duration}s.")
-        return np.array(self.stat).sum(axis=0)
+        return np.array(self.stat)
 
     def run_on_cpu(self, n):
         stat = [0, 0, 0]
@@ -69,5 +69,48 @@ class Test:
 
     def __repr__(self):
         return f"algo {self.game.player0.algo: s} : {self.stat[0]: f} % \n \
-                    algo {self.game.player1.algo: s} : {self.stat[1]: f} % \n \
-                    tied : {self.stat[2]: f} % "
+                algo {self.game.player1.algo: s} : {self.stat[1]: f} % \n \
+                tied : {self.stat[2]: f} % "
+
+
+class TestAmelioration(Test):
+    def __init__(self, algo0, algo1, nb_games, stage, data0, data1):
+        super().__init__(algo0, algo1, nb_games)
+        self.data0 = data0
+        self.data1 = data1
+        self.stage = stage
+
+    def run(self):
+        for _ in range(self.nb_games):
+            self.game = Game()
+            if self.stage is None:
+                self.game.set_players("alphabeta", "alphabeta", self.data0, self.data1)
+                winner = self.game.run_game()
+            elif self.stage == "begin":
+                self.game.set_players("alphabetabegin", "alphabetabegin", self.data0, self.data1)
+                winner = self.game.run_game()
+            elif self.stage == "midgame":
+                self.game.set_players("aleaalphabeta", "aleaalphabeta", "begin", "begin")
+                self.game.run_game()
+                loft0 = self.game.player0.loft
+                loft1 = self.game.player1.loft
+                self.game.set_players("alphabetamidgame", "alphabetamidgame", self.data0, self.data1)
+                self.game.player0.add_to_loft(loft0)
+                self.game.player1.add_to_loft(loft1)
+                winner = self.game.run_game()
+            elif self.stage == "endgame":
+                self.game.set_players("aleaalphabeta", "aleaalphabeta", "midgame", "midgame")
+                self.game.run_game()
+                loft0 = self.game.player0.loft
+                loft1 = self.game.player1.loft
+                self.game.set_players("alphabeta", "alphabeta", self.data0, self.data1)
+                self.game.player0.add_to_loft(loft0)
+                self.game.player1.add_to_loft(loft1)
+                winner = self.game.run_game()
+            if winner == self.game.player0:
+                self.stat[0] += 1
+            elif winner == self.game.player1:
+                self.stat[1] += 1
+            else:
+                self.stat[2] += 1
+        return np.array(self.stat)

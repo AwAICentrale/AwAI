@@ -1,34 +1,35 @@
 import random
-from src.tests import Test
+from src.tests import TestAmelioration
 
 
 class Amelioration():
-    def __init__(self, nb_generation, size_population, nb_gains, proba_mutation=0.01, proba_cross=0.3):
+    def __init__(self, nb_generation, size_population, nb_gains, stage=None, proba_mutation=0.01, proba_cross=0.3):
         self.nb_generation = nb_generation
         self.nb_gains = nb_gains
         self.size_population = size_population
         self.adn = ADN(size_population, nb_gains, proba_mutation, proba_cross)
+        self.stage = stage
 
     def amelioration(self):
         self.update_score()
         for i in range(self.nb_generation):
-            self.adn.list_coeff_init.sort(key=lambda tup: tup[1])
+            self.adn.list_coeff_init.sort(key=lambda tup: tup[1], reverse=True)
             self.adn.selection()
             self.adn.cross()
             self.adn.mutation()
 
             self.update_score()
-        self.adn.list_coeff_init.sort(key=lambda tup: tup[1])
+        self.adn.list_coeff_init.sort(key=lambda tup: tup[1], reverse=True)
         return self.adn.list_coeff_init
 
     def update_score(self):
-        self.adn.list_coeff_init.sort(key=lambda tup: tup[1])
+        self.adn.list_coeff_init.sort(key=lambda tup: tup[1], reverse=True)
         for (i, (list_coeff_gain, score)) in enumerate(self.adn.list_coeff_init[1:]):
-            game_test = Test("alphabeta", "alphabeta", 1, self.adn.list_coeff_init[0][0], list_coeff_gain)
+            game_test = TestAmelioration("alphabeta", "alphabeta", 1, self.stage, self.adn.list_coeff_init[0][0],
+                                         list_coeff_gain)
             game_test.run()
             # update score
-            self.adn.list_coeff_init[i][
-                1] = game_test.game.player0.loft - game_test.game.player1.loft
+            self.adn.list_coeff_init[i][1] = game_test.game.player0.loft - game_test.game.player1.loft
             # is it the best way to evaluate the score ? 27 - 12 equivalent to 25 - 10 ?
 
 
@@ -49,7 +50,7 @@ class ADN:
             self.list_coeff_init.append([liste_coeff_gain, -float('inf')])
 
     def selection(self):  # select the solutions with the better scores and duplicate them
-        self.list_coeff_init.sort(key=lambda tup: tup[1])
+        self.list_coeff_init.sort(key=lambda tup: tup[1], reverse=True)
         n = self.size_population // 2
         self.list_coeff_init = self.list_coeff_init[:self.size_population - n] + [
             self.list_coeff_init[self.size_population - n + k] for k in range(n)]
@@ -63,7 +64,7 @@ class ADN:
                     self.list_coeff_init[k][0][i] = sign * random.random()
 
     def cross(self):  # we choose 2 solutions, we replace them by crossing of themselves
-        self.list_coeff_init.sort(key=lambda tup: tup[1])
+        self.list_coeff_init.sort(key=lambda tup: tup[1], reverse=True)
         n = self.size_population // 2
 
         def repartition(length):  # handles which gen comes from which genitor
