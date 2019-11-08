@@ -6,7 +6,7 @@ from src.AIs.aleaalphabeta import AleaAlphaBeta
 from src.AIs.alphabeta import AlphaBeta
 from src.AIs.alphabeta import AlphaBetaBegin
 from src.AIs.alphabeta import AlphaBetaMidgame
-
+from src.AIs.MCTS import MCTSPlayer
 
 class Player(ABC):
     """Player is an abstract class which fathers IA and Human"""
@@ -53,6 +53,8 @@ class AI(Player):
             if data is None:
                 data = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
             self.algo = AlphaBetaMidgame(self.game, 2, data)
+        elif self.algo == "mcts":
+            self.algo = MCTSPlayer(self.game)
 
     def play(self):
         return self.algo.play()
@@ -64,6 +66,7 @@ class Human(Player):
         super().__init__(game)
 
     def play(self):
+        print(self.game.b)
 
         while 1:
             try:

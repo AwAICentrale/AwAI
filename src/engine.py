@@ -26,7 +26,8 @@ class Game:
         self.b = Board()
         # _below this number of seeds the game stops
         self.nb_seeds_end = nb_seeds_end
-        self.algos_available = ["alea", "alphabeta", "minimax", "aleaalphabeta", "alphabetabegin", "alphabetamidgame"]
+        self.algos_available = ["alea", "alphabeta", "minimax", "aleaalphabeta", "alphabetabegin", "alphabetamidgame",
+                                "mcts"]
         self.is_playing = 0
         self.nb_seeds_eaten = 0
         self.GUI = GUI
@@ -57,7 +58,7 @@ class Game:
         while (self.nb_seeds_eaten < 48 - self.nb_seeds_end) \
                 and max(self.player0.loft, self.player1.loft) <= 24 \
                 and not (self.nb_seeds_eaten == 46 and self.end_game_is_blocked()):
-            time.sleep(1)
+            # time.sleep(1)
             pit = self.who_is_playing().play()
             rslt_move = self.play(pit)
             if rslt_move == "END":
@@ -70,7 +71,7 @@ class Game:
                 logging.info("player :" + str(1 - self.is_playing) + " plays : " + str(pit))
                 logging.info(f"{self.player0.loft}, {self.player1.loft}")
                 logging.info(self.b)
-            print(self.b)
+            # print(self.b)
 
         return self.end_of_game()
 

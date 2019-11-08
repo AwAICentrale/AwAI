@@ -12,11 +12,11 @@ from src.engine import Game
 # t = Test("alea", "alphabeta", 1000)
 # t.run_on_all_cores()
 
-# t = Test("alphabetaendgame", "alphabetaendgame", 1)
-# t.run()
-# print(t.game.player0.loft, t.game.player1.loft)
-# print(list(t.stat))
+t = Test("human", "mcts", 1)
+t.run()
+print(t.game.player0.loft, t.game.player1.loft)
+print(list(t.stat))
 
-game = Game()
-game.set_players("human", "human")
-game.run_game()
+# game = Game()
+# game.set_players("alea", "")
+# game.run_game()
