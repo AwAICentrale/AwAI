@@ -89,7 +89,7 @@ class MCTS:
         if node.n != 0 and node.pred.n!=0:
             v_i = node.pred.t/node.pred.n
             return v_i + constant*math.sqrt(math.log(node.pred.n)/node.n)
-        elif node.n != 0 and node.pred.n==0:
+        elif node.n == 0 and node.pred.n==0:
             return node.pred.t/node.pred.n
         else:
             return float("inf")
@@ -143,25 +143,13 @@ class MCTS:
 
 
 
-g = Game()
-g.set_players("human","human")
-g.is_playing = 0
-g.nb_seeds_eaten = 4
-b= Board()
-b.board = [4,5,5,5,5,0,4,4,4,4,4,4]
-g.b = b
-m=MCTS(g,0)
-for i in range(20):
-    m.expansion()
-
-
-# if __name__ == "__main__":
-#     g = Game()
-#     g.is_playing = 1
-#     g.nb_seeds_eaten = 4
-#     b= Board()
-#     b.board = [4,5,5,5,5,0,4,4,4,4,4,4]
-#     g.board = b
-#     e = Eval(g,10000)
-#     e.calculateRatio()
-#     print("Le score est {}/{}".format(round(e.ratio[0],3),round(e.ratio[1],3)))
+# g = Game()
+# g.set_players("human","human")
+# g.is_playing = 0
+# g.nb_seeds_eaten = 4
+# b= Board()
+# b.board = [4,5,5,5,5,0,4,4,4,4,4,4]
+# g.b = b
+# m=MCTS(g,0)
+# for i in range(20):
+#     m.expansion()
