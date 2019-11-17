@@ -1,4 +1,5 @@
 from copy import deepcopy
+from random import randrange, random
 
 
 class AlphaBeta:
@@ -9,9 +10,19 @@ class AlphaBeta:
         self.flag = "END"
 
     def play(self):
-        evaluation, move = self.play_rec(self.depth, float("-inf"), float("inf"),
-                                         self.game.b, self.game.is_playing,
-                                         self.game.player0.loft, self.game.player1.loft)
+        list_move = [0, 1, 2, 3, 4, 5]
+        while list_move:
+            move = list_move.pop(randrange(0, len(list_move)))
+            result = self.game.allowed(move)
+            if result:
+                break
+        if self.game.TEST and random() < 0.05:
+            return move
+
+        else:
+            evaluation, move = self.play_rec(self.depth, float("-inf"), float("inf"),
+                                             self.game.b, self.game.is_playing,
+                                             self.game.player0.loft, self.game.player1.loft)
         return move
 
     def play_rec(self, depth, alpha, beta, board, is_playing, loft0, loft1):
