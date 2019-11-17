@@ -26,8 +26,8 @@ class Game:
         self.b = Board()
         # _below this number of seeds the game stops
         self.nb_seeds_end = nb_seeds_end
-        self.algos_available = ["alea", "alphabeta", "minimax", "aleaalphabeta", "alphabetabegin", "alphabetamidgame",
-                                "mcts"]
+        self.algos_available = ["alea", "alphabeta2", "alphabeta4", "alphabeta6", "alphabeta8", "alphabeta10"
+                                "minimax", "aleaalphabeta", "alphabetabegin", "alphabetamidgame", "mcts"]
         self.is_playing = 0
         self.nb_seeds_eaten = 0
         self.GUI = GUI

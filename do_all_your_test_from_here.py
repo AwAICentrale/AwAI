@@ -7,10 +7,10 @@ from src.engine import Game
 #a = Amelioration(8, 8, 4).amelioration()
 #print(a)
 # ---- TEST ON ONE CORE -----
-# t = Test("alphabeta", "alphabeta", 1)
-# t.run()
-# print(t.game.player0.loft, t.game.player1.loft)
-# print(list(t.stat))
+t = Test("alphabeta10", "alphabeta2", 1)
+t.run()
+print(t.game.player0.loft, t.game.player1.loft)
+print(list(t.stat))
 
 
 # ----- TEST ON ALL CORES -----
