@@ -1,18 +1,21 @@
-#coding:utf-8
-#!/usr/bin/python3
+# coding:utf-8
+# !/usr/bin/python3
 
-#------------USE RECOMMENDATIONS-------------
+# ------------USE RECOMMENDATIONS-------------
 # Default index of the databases passed as argument in the following
 # functions is : [Number of seeds eaten by player 1,
 #                 Number of seeds eaten by player 2,
 #                 Plays (a string of numbers beetween 1 and 6,
 #                        representing all the plays made in a game)]
+#
 # If the index is different, pass the keyword argument columns when using
 # the functions (e.g. for a [Nb seeds 2, Random, Plays, Nb seeds 1],
 #                you should pass columns=(3, 0, 2)
 #
-# dtb is used for database
-#--------------------------------------------
+# 'dtb' is used for 'database'
+# To follow pandas module choice, the functions return new objects
+# rather than modifying them
+# --------------------------------------------
 
 
 import os
@@ -20,23 +23,33 @@ import pandas as pd
 
 DTB_PATH = os.path.join('.', 'wari_ludoteka.csv')
 
-#Various functions
+# Various functions
+
 
 def max_series(x, y):
-        """
-        x, y two pandas.Series objects of same shape, max(x,y) is the
-        pandas.Series whose values correspond to the maximum of the
-        values of x and y
-        """
-        return pd.Series([max(x[i], y[i]) for i in range(x.shape[0])],
-                         index=x.index)
+    """
+    x, y two pandas.Series objects of same shape, max(x,y) is the
+    pandas.Series whose values correspond to the maximum of the
+    values of x and y
+    """
+    return x.combine(y, max).astype(int, errors='ignore')
 
-def seeds_number(dtb, round: int, columns=(0,1,2)):  # IN WORK
+
+def min_series(x, y):
+    """
+    x, y two pandas.Series objects of same shape, min(x,y) is the
+    pandas.Series whose values correspond to the minimum of the
+    values of x and y
+    """
+    return x.combine(y, min).astype(int, errors='ignore')
+
+
+def seeds_number(dtb, round: int, columns=(0, 1, 2)):  # IN WORK
     """
     Display statistics about the round concerned
     round : the round of the game to be studied
     """
-    bdd = pd.read_csv(BDD_PATH, sep=sep)
+
 
 def convert_game(game: str):
     """
@@ -45,130 +58,293 @@ def convert_game(game: str):
     Return a string representing the same game in numbers format
     (e.g. '5321642...')
     """
-    conversion_dict = {'a':6, 'b':5, 'c':4, 'd':3, 'e':2, 'f':1}
+    conversion_dict = {'a': 6, 'b': 5, 'c': 4, 'd': 3, 'e': 2, 'f': 1}
     out = ''
     for i in list(game.lower()):
         out += str(conversion_dict[i])
     return out
 
-def test_game(game: str):  #TO BE REVISED
+
+def convert_games(dtb, columns=(0, 1, 2)):
     """
-    game : a string representing an Awale game in the number format
+    Convert all games of dtb (see convert_game)
+    """
+    col = dtb.columns
+    moves = col[columns[2]]  # the name of the moves column
+
+    def convert_column(column):
+        return column.apply(convert_game)
+
+    return dtb.apply(lambda column: convert_column(column)
+                     if (column.name == moves)
+                     else column)
+
+
+def test_game(plays: str):
+    """
+    plays : a string representing an Awale game in the number format
            (e.g. '1524634250...', see convert_game function above)
     Return a boolean on whether the game is a real game or not
     (no errors in the plays indicated)
     """
-    from sys import path
-    # parent_dir_path = os.path.split(os.getcwd())[0]
-    # sys.path.append(parent_dir_path)
-    import engine, player  #import this module from the parent directory
-    
-    game = 1
+    from src import engine
+    from src import player
 
-    sys.path.remove(parent_dir_path) #clearing sys.path
+    plays = [int(i) for i in plays]
+    plays0, plays1 = plays[::2], plays[1::2]
 
-def winners_seeds_number(dtb, columns=(0, 1, 2)): #NEEDS COMMENTS
+    game = engine.Game()
+    game.player0, game.player1 = player.Record(game, plays0),
+    player.Record(game, plays1)
+
+    try:
+        game.run_game()
+        return True
+    except:
+        return False
+
+
+def winners_seeds_number(dtb, columns=(0, 1, 2)):
     """
-    Return a list of tuples (n, m), where m is the number of games won
-    with n seeds eaten by the the winner
+    Return a 49 long list of int, where the (n-1)th number represents the
+    number of games won with n seeds eaten by the winner
     """
-    n = dtb.shape[0]
+    from functions import max_series
+
     col = dtb.columns
+    seeds1, seeds2 = dtb[col[columns[0]]], dtb[col[columns[1]]]
+    seeds_winner = max_series(seeds1, seeds2)
 
-    nb_games = 50*[0] #nb_games[i] : number of games won with i seeds
-    max, seeds1, seeds2 = 0, 0, 0
+    seeds_winner = seeds_winner.value_counts()
+    # Add zero for each ending number of seeds, to have 49 values
+    zeros = pd.Series(49*[0])
+    seeds_winner = seeds_winner.add(zeros, fill_value=0).astype(int)
 
-    for i in range(n):
-        seeds1, seeds2 = dtb[col[columns[0]]][i], dtb[col[columns[1]]][i]
-        max = (seeds1>seeds2)*(seeds1-seeds2) + seeds2
-        nb_games[max] += 1
+    return list(seeds_winner.sort_index())
 
-    return [(i, nb_games[i]) for i in range(24, 49)]
 
+def loosers_seeds_number(dtb, columns=(0, 1, 2)):
+    """
+    Return a 49 long list of int, where the (n-1)th number represents the
+    number of games won with n seeds eaten by the looser
+    """
+    from functions import min_series
+
+    col = dtb.columns
+    seeds1, seeds2 = dtb[col[columns[0]]], dtb[col[columns[1]]]
+    seeds_looser = min_series(seeds1, seeds2)
+
+    seeds_looser = seeds_looser.value_counts()
+    # Add zero for each ending number of seeds, to have 49 values
+    zeros = pd.Series(49*[0])
+    seeds_looser = seeds_looser.add(zeros, fill_value=0).astype(int)
+
+    return list(seeds_looser.sort_index())
+
+
+def player_stats(dtb, player1='player1', player2='player2',
+                 columns=(0, 1, 2)):
+    """
+    player1: name of the column containing the id of the 1st player
+    Returns a DataFrame mapping each player to the number of games he
+    played and the number of wins
+    """
+    new_dtb = winner(dtb, player1, player2)
+
+    nb_win = new_dtb['winner'].value_counts()
+    nb_games1 = new_dtb[player1].value_counts()
+    nb_games2 = new_dtb[player2].value_counts()
+
+    nb_games = nb_games1.add(nb_games2, fill_value=0)
+    win_rate = nb_win/nb_games
+
+    result = pd.DataFrame({'nb_games': nb_games, 'nb_win': nb_win,
+                           'win_rate': win_rate})
+    return result.fillna(value=0)
+
+# RESULTS: nb_games nb_wins win_rate
+# 5495    1819.0  1497.0  0.822980
+# 7597     441.0   366.0  0.829932
+# 4071     383.0   319.0  0.832898
+# 7543     919.0   767.0  0.834603
+# 7575    1012.0   861.0  0.850791
+# 7435    1758.0  1501.0  0.853811
+# 8345    1132.0   974.0  0.860424
+# 5714     517.0   473.0  0.914894
+# 6507     305.0   290.0  0.950820
+# 5061     389.0   373.0  0.958869
+
+# CHOSEN: nb_games    407.000000
+# nb_win      184.000000
+# win_rate      0.452088
+# Name: 4784, dtype: float64
 
 # Functions useful to reformat the database
 
-def nb_moves(dtb, columns=(0,1,2)):  #ON WORK
-    """
-    Add a 'nb of moves played' column to the database
-    """
 
+def nb_moves(dtb, columns=(0, 1, 2)):
+    """
+    Return a new database with a 'nb of moves played' column added
+    """
+    col = dtb.columns
+    moves = dtb[col[columns[2]]].rename('nb of moves played')
+
+    nb_moves = moves.apply(len)  # count the nb of chars of every value
+
+    return dtb.join(nb_moves)
+
+
+def players_moves(dtb, columns=(0, 1, 2)):
+    """
+    Return a new database in which the column 'moves' has been split in
+    two columns : 'moves1' and 'moves2', the moves of the first player
+    and the moves of the second one
+    """
+    col = dtb.columns
+    moves = dtb[col[columns[2]]]
+    moves1_ = moves.apply(lambda game: game[::2])
+    moves2_ = moves.apply(lambda game: game[1::2])
+
+    numindex = list(range(len(col)))
+    numindex.remove(columns[2])
+    new_dtb = dtb.take(numindex, axis=1)
+    return new_dtb.assign(moves1=moves1_, moves2=moves2_)
+
+
+def winner(dtb, player1='player1', player2='player2', columns=(0, 1, 2)):
+    """
+    player1: the name of the column containing the id of the 1st player
+    Returns the database with a 'winner' column added, containing the id
+    of the winner for each game
+    """
+    def game_winner(x, player1, player2, columns):
+        col = dtb.columns
+        if x[col[columns[0]]] > x[col[columns[1]]]:
+            return x[player1]
+        else:
+            return x[player2]
+
+    winner_column = dtb.apply(lambda x: game_winner(x, player1, player2,
+                                                    columns), axis=1)
+
+    return dtb.assign(winner=winner_column)
 
 # Functions to create new interesting database from the first one
 
-def dtb_nb_moves(dtb, x: int, player=0, columns=(0,1,2)):  #ON WORK
+
+def groupby_openings(dtb, length: int, players=0, columns=(0, 1, 2)):  # ON WORK
     """
     Statistics about openings
-    x : the lenght of openings to analyze
+    length : the lenght of openings considered
+    players : if not 0 or False then openings are player specific (see
+    the function payers_moves)
     Return a pandas.Groupby object mapping games by their openings
-    (e.g. "FaEeBd") to their number of occurences in the database
-    If player=1 then the openings will be player specific
-    (e.g. "FaEcDe" contributes for 3-long openings as "FED" and "ace")
+    (e.g. "13254")
     """
+    col = dtb.columns
+    moves = col[columns[2]]  # Name of the moves column of dtb
 
-def dtb_x_first_moves(x: int, dtb, player=0, columns=(0,1,2)):  #ON WORK
-    """Return a csv indexed by "x first moves", "nb of games", "games"
-    (gather games that begun with the same x first moves)
-    -> if player = 1 or 2 : games where the corresponding player begun
-    """
-    try :
-        player in {0,1,2}
-    except ValueError :
-        print("player should be 1 or 2 (0 by default)")
+    if not(players):
+        moves = col[columns[2]]  # Name of the moves column of dtb
+        return dtb.groupby(by=lambda x: (dtb[moves][x][0:length]))
+
+    else:
+        # Here each game shall contribute twice
+        sparsing_dtb = players_moves(dtb, columns)
+
+        max_index = max(dtb.index)
+        new_index = [x+max_index for x in dtb.index]
+
+        dtb2 = dtb.copy()
+        dtb2.index = new_index
+        dtb2 = dtb.append(dtb2)  # dtb with doubled rows
+
+        group = dtb2.groupby(by=lambda x:
+                             sparsing_dtb.moves1[x][0:length] if x <= max_index
+                             else sparsing_dtb.moves2[x-max_index][0:length])
+        return group
 
 
-def dtb_seeds_winner(dtb, columns=(0,1,2)):
+def dtb_seeds_winner(dtb, columns=(0, 1, 2)):
     """
     Return a pandas.GroupBy object that gather games which ended with
     the same number of seeds eaten by the winner
     """
-    
-    from . import max_series    
+
+    from functions import max_series
 
     out = dtb.assign(seeds_winner=lambda x: max_series(
-                                                x[x.columns[columns[0]]],
-                                                x[x.columns[columns[1]]]
-                                                 ))
+        x[x.columns[columns[0]]],
+        x[x.columns[columns[1]]]
+    ))
 
     out = out.groupby('seeds_winner')
     return out
 
-            
+
+def dtb_seeds_looser(dtb, columns=(0, 1, 2)):
+    """
+    Return a pandas.GroupBy object that gather games which ended with
+    the same number of seeds eaten by the looser
+    """
+
+    from functions import min_series
+
+    out = dtb.assign(seeds_looser=lambda x: min_series(
+        x[x.columns[columns[0]]],
+        x[x.columns[columns[1]]]
+    ))
+
+    out = out.groupby('seeds_looser')
+    return out
+
+
+def dtb_select_player(dtb, player: int, columns=(0, 1, 2)):
+    """
+    Returns the database with only the selected player games
+    """
+    return dtb.query('player1=='+str(player)+' or player2=='+str(player))
+
+
 # Miscellaneous
-            
+
+
 def test():
     """
     useful function for testing : generates a pandas.Dataframe database
     from wari_ludoteka
     """
-    
+
     dtb = pd.read_csv(DTB_PATH, sep=';')
     dtb = dtb.truncate(before=0, after=108983).rename(columns={
-                                                'Unnamed: 4': 'moves',
-                                                'Nb graines 1': 'seeds1',
-                                                'Nb graines 2': 'seeds2',
-                                                'Joueur 1': 'player1',
-                                                'Joueur 2': 'player2'})
-    print(dtb.columns)
+        'Unnamed: 4': 'moves',
+        'Nb graines 1': 'seeds1',
+        'Nb graines 2': 'seeds2',
+        'Joueur 1': 'player1',
+        'Joueur 2': 'player2'})
     dtb = dtb.astype(dtype={
-                            'player1': int,
-                            'seeds1': int,
-                            'player2': int,
-                            'seeds2': int,
-                            'moves': str})
-    dtb = dtb.filter(items=[           
-                            'seeds1',
-                            'seeds2',
-                            'moves'])  #remove useless columns 'Player 1'
-                                       #and 'Player 2' from dtb
+        'player1': int,
+        'seeds1': int,
+        'player2': int,
+        'seeds2': int,
+        'moves': str})
+    # dtb = dtb.filter(items=[
+    #     'seeds1',
+    #     'seeds2',
+    #     'moves'])  # remove useless columns 'Player 1' and 'Player 2' from dtb
+    # convert games representations in numerical
+    dtb = convert_games(dtb, (1, 3, 4))
+
+    dtb = dtb.reindex(['seeds1', 'seeds2', 'moves', 'player1',
+                       'player2'], axis=1)
     return dtb
+
 
 dtb = test()
 
 if __name__ == '__main__':
 
-        try :
-            dtb = test()
-        except FileNotFoundError :
-            print('The variable DTB_PATH may be not correct')
-        
+    try:
+        dtb = test()
+    except FileNotFoundError:
+        print('The variable DTB_PATH may be not correct')

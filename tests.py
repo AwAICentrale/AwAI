@@ -4,6 +4,9 @@
 # Test script for the database manipulation functions
 # To launch the tests, import the script in a Python process, then enter
 # "ut.main()" (/!\ That kills the process) 
+#
+# At the end is defined DTB_TEST, a sample of the wari_ludoteka database,
+# used in some of the testing functions (and COLUMNS_TEST)
 
 import pandas as pd
 import unittest as ut  # standard test library
@@ -24,19 +27,51 @@ class TestDTB(ut.TestCase):
         self.assertEqual(convert_game(game), '3642313165')
 
     def test_winners_seeds_number(self):
-        seeds1 = pd.Series([28,2,13,48,0,19,26,26])
-        seeds2 = pd.Series([1,25,24,0,24,5,22,0])
-        moves = pd.Series(['','','','','','','',''])
+        self.assertEqual(winners_seeds_number(DTB_TEST, COLUMNS_TEST),
+                         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                          0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 4, 1, 1, 2, 1,
+                          0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                          0])
 
-        dtb = pd.DataFrame({'seeds1': seeds1,
-                            'seeds2': seeds2,
-                            'moves': 'moves'})
-        self.assertEqual(winners_seeds_number(dtb),
-                         [(24, 2), (25, 1), (26, 2), (27, 0), (28, 1),
-                          (29, 0), (30, 0), (31, 0), (32, 0), (33, 0),
-                          (34, 0), (35, 0), (36, 0), (37, 0), (38, 0),
-                          (39, 0), (40, 0), (41, 0), (42, 0), (43, 0),
-                          (44, 0), (45, 0), (46, 0), (47, 0), (48, 1)])
-
+    def test_nb_moves(self):
+        expected = pd.Series([177, 52, 79, 45, 110, 69, 168, 66, 102,
+                              125, 99, 116, 62, 128, 66, 129, 37, 43,
+                              39, 111],
+                             index=[63065, 30459, 41286, 57839, 1399,
+                                    100033, 2464, 78086, 2596, 50564,
+                                    89719, 170, 107040, 98170, 17881,
+                                    7245, 930, 96587, 108850, 4791])
+        expected = expected.rename('nb of moves played')
+        result = (nb_moves(DTB_TEST, COLUMNS_TEST)['nb of moves played']
+                                                               ==expected)
+        self.assertTrue(result.all())
     
-        
+    def test_grouby_openings(self):
+        from pandas import Int64Index
+        expected = Int64Index([7245, 4791, 109780], dtype='int64')
+        result = groupby_openings(DTB_TEST, 3, players=1,
+                                  columns=COLUMNS_TEST)
+        self.assertEqual(result.groups['636'], expected)
+
+
+DTB_TEST = pd.read_csv(DTB_PATH, sep=';')
+random_rows = [63065, 30459, 41286, 57839, 1399, 100033, 2464, 78086,
+               2596, 50564, 89719, 170, 107040, 98170, 17881, 7245,
+               930, 96587, 108850, 4791] # 20 random games, as a sample
+DTB_TEST = DTB_TEST.take(random_rows).rename(columns={
+                                                'Unnamed: 4': 'moves',
+                                                'Nb graines 1': 'seeds1',
+                                                'Nb graines 2': 'seeds2',
+                                                'Joueur 1': 'player1',
+                                                'Joueur 2': 'player2'})
+DTB_TEST = DTB_TEST.astype(dtype={
+                        'player1': int,
+                        'seeds1': int,
+                        'player2': int,
+                        'seeds2': int,
+                        'moves': str})
+DTB_TEST = DTB_TEST.reindex(['moves','seeds2','player2','player1','seeds1'], axis='columns')
+COLUMNS_TEST = (4, 1, 0)
+DTB_TEST = convert_games(DTB_TEST, COLUMNS_TEST)
+
+
