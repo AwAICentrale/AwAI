@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>board.png</file>
+    <file>awai.png</file>
+  </qresource>
+</RCC>
