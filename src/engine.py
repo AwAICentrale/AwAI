@@ -26,15 +26,18 @@ class Game:
         self.b = Board()
         # _below this number of seeds the game stops
         self.nb_seeds_end = nb_seeds_end
-        self.algos_available = ["alea", "alphabeta", "minimax", "aleaalphabeta", "alphabetabegin", "alphabetamidgame",
-                                "mcts"]
+        self.algos_available = ["alea", "alphabeta2", "alphabeta4", "alphabeta6", "alphabeta8", "alphabeta10",
+                                "minimax", "aleaalphabeta", "alphabetabegin", "alphabetamidgame", "mcts"]
         self.is_playing = 0
         self.nb_seeds_eaten = 0
         self.GUI = GUI
+        self.TEST =False
 
     def set_players(self, player0, player1, data0=None, data1=None):
         """you have to call this function to create the type of the players
         before the game starts"""
+        if (player0 in self.algos_available) and (player1 in self.algos_available):
+            self.TEST = True
         if player0 in self.algos_available:
             self.player0 = AI(player0, self, data=data0)
         else:

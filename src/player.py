@@ -41,10 +41,26 @@ class AI(Player):
             if data is None:
                 data = [1, -1]
             self.algo = Minimax(self.game, data)
-        elif self.algo == "alphabeta":
+        elif self.algo == "alphabeta2":
             if data is None:
                 data = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
             self.algo = AlphaBeta(self.game, 2, data)  # data is listecoeffgain
+        elif self.algo == "alphabeta4":
+            if data is None:
+                data = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
+            self.algo = AlphaBeta(self.game, 4, data)  # data is listecoeffgain
+        elif self.algo == "alphabeta6":
+            if data is None:
+                data = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
+            self.algo = AlphaBeta(self.game, 6, data)  # data is listecoeffgain
+        elif self.algo == "alphabeta8":
+            if data is None:
+                data = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
+            self.algo = AlphaBeta(self.game, 8, data)  # data is listecoeffgain
+        elif self.algo == "alphabeta10":
+            if data is None:
+                data = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
+            self.algo = AlphaBeta(self.game, 8, data)  # data is listecoeffgain
         elif self.algo == "alphabetabegin":
             if data is None:
                 data = [0.676061829383705, -0.4604896125458653, 0.7408590076155085, 0.3691310747575154]
